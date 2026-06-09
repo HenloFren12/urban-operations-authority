@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audit Log | Urban Operations Authority — Government of Karnataka</title>
+  <meta name="description" content="System audit trail and event log — Urban Operations Authority, Government of Karnataka." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    /* ===================================================================
+       DESIGN TOKENS
+       =================================================================== */
+    :root {
+      --bg-deep:            #030e1c;
+      --bg-base:            #051424;
+      --bg-surface:         #0d1c2d;
+      --bg-surface-mid:     #122131;
+      --bg-surface-high:    #1c2b3c;
+      --bg-surface-highest: #273647;
+      --bg-sidebar:         #040c18;
+
+      --steel-blue:         #4a8cc7;
+      --steel-blue-bright:  #6eaadf;
+      --steel-blue-dim:     #2f5d8a;
+      --primary:            #9fcafd;
+      --primary-container:  #2f5d8a;
+
+      --teal:               #5ed9d7;
+      --teal-bright:        #7df0ee;
+      --teal-dim:           #3db5b3;
+      --teal-deep:          #00504f;
+
+      --green:              #66d9a0;
+      --green-dim:          #2a7a50;
+      --red:                #ff6b6b;
+      --red-dim:            #93000a;
+      --amber:              #f5c542;
+      --amber-dim:          #8a6d00;
+      --purple:             #b89cff;
+
+      --on-surface:         #d4e4fa;
+      --on-surface-variant: #a0afc4;
+      --outline:            #8c9199;
+      --outline-variant:    #42474f;
+
+      --error:              #ffb4ab;
+      --white-3:            rgba(255,255,255,0.03);
+      --white-5:            rgba(255,255,255,0.05);
+      --white-8:            rgba(255,255,255,0.08);
+      --white-12:           rgba(255,255,255,0.12);
+
+      --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --transition-fast: 180ms cubic-bezier(.4,0,.2,1);
+      --transition-base: 300ms cubic-bezier(.4,0,.2,1);
+      --transition-slow: 500ms cubic-bezier(.4,0,.2,1);
+
+      --sidebar-width: 240px;
+      --sidebar-collapsed: 64px;
+      --topnav-height: 56px;
+    }
+
+    /* ===================================================================
+       RESET
+       =================================================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; height: 100%; }
+    body {
+      font-family: var(--font-primary);
+      background: var(--bg-base);
+      color: var(--on-surface);
+      height: 100%; overflow: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; }
+    ul { list-style: none; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    /* ===================================================================
+       GLASS
+       =================================================================== */
+    .glass-frost {
+      background: rgba(22, 36, 54, 0.55);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border: 1px solid var(--white-5);
+    }
+
+    /* ===================================================================
+       TOP NAVIGATION
+       =================================================================== */
+    .top-nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--topnav-height); z-index: 200;
+      background: rgba(4, 12, 24, 0.88);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--white-5);
+      display: flex; align-items: center; padding: 0 20px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; min-width: 200px; }
+    .nav-emblem {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--steel-blue), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: var(--bg-deep);
+    }
+    .nav-title { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: var(--on-surface); }
+    .nav-center { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .nav-tab {
+      padding: 7px 16px; font-size: 13px; font-weight: 500;
+      color: var(--on-surface-variant); border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+    .nav-tab:hover { color: var(--on-surface); opacity: 0.8; }
+    .nav-tab.active {
+      color: var(--primary); background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; min-width: 200px; justify-content: flex-end; }
+    .nav-icon-btn {
+      position: relative; color: var(--on-surface-variant); font-size: 20px;
+      padding: 6px; border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .nav-icon-btn:hover { color: var(--on-surface); background: var(--white-5); }
+    .nav-icon-btn .badge {
+      position: absolute; top: 2px; right: 2px; width: 8px; height: 8px;
+      border-radius: 50%; background: var(--red); border: 2px solid var(--bg-sidebar);
+    }
+    .nav-avatar {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--bg-surface-high);
+      border: 1.5px solid var(--outline-variant);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--on-surface-variant);
+      cursor: pointer; transition: border-color var(--transition-fast);
+    }
+    .nav-avatar:hover { border-color: var(--primary); }
+
+    /* ===================================================================
+       SIDEBAR
+       =================================================================== */
+    .sidebar {
+      position: fixed; top: var(--topnav-height); left: 0; bottom: 0;
+      width: var(--sidebar-width); background: var(--bg-sidebar);
+      border-right: 1px solid var(--white-5); z-index: 100;
+      display: flex; flex-direction: column;
+      transition: width var(--transition-base); overflow: hidden;
+    }
+    .sidebar.collapsed { width: var(--sidebar-collapsed); }
+    .sidebar-toggle {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 12px 16px; border-bottom: 1px solid var(--white-5);
+    }
+    .sidebar-toggle button {
+      color: var(--outline); font-size: 20px; padding: 4px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .sidebar-toggle button:hover { color: var(--on-surface); background: var(--white-5); }
+    .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+    .sidebar-section-label {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--outline-variant);
+      padding: 16px 10px 8px; white-space: nowrap; overflow: hidden;
+    }
+    .sidebar.collapsed .sidebar-section-label { opacity: 0; height: 0; padding: 0; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+      font-size: 13px; font-weight: 500; color: var(--on-surface-variant);
+      border-radius: var(--radius-sm); transition: all var(--transition-fast);
+      white-space: nowrap; cursor: pointer; margin-bottom: 2px;
+    }
+    .sidebar-item:hover { color: var(--on-surface); background: var(--white-3); opacity: 0.85; }
+    .sidebar-item.active {
+      color: var(--primary); background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+    .sidebar-item .material-symbols-outlined { font-size: 20px; flex-shrink: 0; width: 20px; }
+    .sidebar-item .label { transition: opacity var(--transition-fast); }
+    .sidebar.collapsed .sidebar-item .label { opacity: 0; width: 0; overflow: hidden; }
+    .sidebar.collapsed .sidebar-item { justify-content: center; padding: 10px; }
+    .sidebar-footer {
+      padding: 12px 14px; border-top: 1px solid var(--white-5);
+      white-space: nowrap; overflow: hidden;
+    }
+    .sidebar-footer-text {
+      font-family: var(--font-mono); font-size: 9px;
+      color: var(--outline-variant); letter-spacing: 0.06em;
+    }
+    .sidebar.collapsed .sidebar-footer-text { opacity: 0; }
+
+    /* ===================================================================
+       MAIN PANEL
+       =================================================================== */
+    .main-panel {
+      position: fixed; top: var(--topnav-height);
+      left: var(--sidebar-width); right: 0; bottom: 0;
+      overflow-y: auto; overflow-x: hidden;
+      background: var(--bg-base);
+      transition: left var(--transition-base);
+      padding: 28px 32px 60px;
+    }
+    .sidebar.collapsed ~ .main-panel { left: var(--sidebar-collapsed); }
+
+    .main-panel::-webkit-scrollbar { width: 6px; }
+    .main-panel::-webkit-scrollbar-track { background: transparent; }
+    .main-panel::-webkit-scrollbar-thumb { background: var(--outline-variant); border-radius: 3px; }
+    .main-panel::-webkit-scrollbar-thumb:hover { background: var(--outline); }
+
+    /* ===================================================================
+       PANEL HEADER
+       =================================================================== */
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px; flex-wrap: wrap; gap: 16px;
+    }
+    .panel-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+    .panel-subtitle { font-size: 13px; color: var(--outline); margin-bottom: 24px; }
+    .panel-header-right { display: flex; align-items: center; gap: 12px; }
+
+    /* Live badge */
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 20px;
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--green); background: rgba(102, 217, 160, 0.06);
+      border: 1px solid rgba(102, 217, 160, 0.12);
+    }
+    .live-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      animation: livePulse 2.4s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .section-divider { height: 1px; background: var(--white-5); margin: 24px 0; }
+
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===================================================================
+       FILTER CHIPS
+       =================================================================== */
+    .filter-chips {
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 24px;
+    }
+
+    .filter-chips-label {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--outline); margin-right: 4px;
+    }
+
+    .filter-chip {
+      padding: 7px 16px;
+      font-size: 12px; font-weight: 500;
+      color: var(--on-surface-variant);
+      background: var(--bg-surface-mid);
+      border: 1.5px solid var(--outline-variant);
+      border-radius: 20px;
+      transition: all var(--transition-base);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .filter-chip:hover {
+      color: var(--on-surface);
+      border-color: var(--on-surface-variant);
+      background: var(--bg-surface-high);
+    }
+
+    .filter-chip.active {
+      color: var(--teal);
+      border-color: var(--teal);
+      background: rgba(94, 217, 215, 0.06);
+    }
+
+    .filter-chip.active:hover {
+      background: rgba(94, 217, 215, 0.10);
+    }
+
+    /* Search */
+    .audit-search-wrapper {
+      position: relative; margin-left: auto; min-width: 220px;
+    }
+    .audit-search-wrapper .material-symbols-outlined {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      font-size: 18px; color: var(--outline); pointer-events: none;
+      transition: color var(--transition-fast);
+    }
+    .audit-search {
+      width: 100%; padding: 8px 14px 8px 38px;
+      font-size: 13px; color: var(--on-surface);
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--outline-variant);
+      border-radius: 20px; outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .audit-search::placeholder { color: var(--outline); }
+    .audit-search:focus {
+      border-color: var(--steel-blue);
+      box-shadow: 0 0 0 3px rgba(74,140,199,0.10), 0 0 16px rgba(74,140,199,0.06);
+    }
+    .audit-search:focus ~ .material-symbols-outlined { color: var(--steel-blue-bright); }
+
+    /* ===================================================================
+       AUDIT TIMELINE
+       =================================================================== */
+    .timeline-container {
+      position: relative;
+      padding-left: 40px;
+      opacity: 0;
+      animation: revealUp 0.6s 0.2s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    /* Vertical line */
+    .timeline-line {
+      position: absolute;
+      left: 15px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(
+        180deg,
+        var(--teal-dim) 0%,
+        var(--steel-blue-dim) 40%,
+        var(--outline-variant) 100%
+      );
+      border-radius: 2px;
+    }
+
+    /* Date group header */
+    .timeline-date-header {
+      position: relative;
+      margin-bottom: 16px;
+      margin-top: 28px;
+      padding-left: 24px;
+    }
+
+    .timeline-date-header:first-child { margin-top: 0; }
+
+    .timeline-date-header .date-dot {
+      position: absolute;
+      left: -33px; top: 50%; transform: translateY(-50%);
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--bg-base);
+      border: 2px solid var(--steel-blue);
+      z-index: 2;
+    }
+
+    .timeline-date-label {
+      font-family: var(--font-mono);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    /* Timeline entry (audit card) */
+    .timeline-entry {
+      position: relative;
+      margin-bottom: 12px;
+      padding-left: 24px;
+    }
+
+    /* Timeline node */
+    .timeline-node {
+      position: absolute;
+      left: -31px; top: 18px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      z-index: 2;
+      transition: all var(--transition-base);
+    }
+
+    .timeline-node.active {
+      background: var(--teal);
+      box-shadow: 0 0 8px rgba(94, 217, 215, 0.4);
+      animation: nodePulse 2.5s ease-in-out infinite;
+    }
+
+    .timeline-node.system {
+      background: var(--steel-blue);
+      box-shadow: 0 0 6px rgba(74, 140, 199, 0.3);
+    }
+
+    .timeline-node.warning {
+      background: var(--amber);
+      box-shadow: 0 0 6px rgba(245, 197, 66, 0.3);
+      animation: nodePulse 2s ease-in-out infinite;
+    }
+
+    .timeline-node.error {
+      background: var(--red);
+      box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+      animation: nodePulse 1.8s ease-in-out infinite;
+    }
+
+    .timeline-node.resolved {
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(102, 217, 160, 0.3);
+    }
+
+    .timeline-node.auth {
+      background: var(--purple);
+      box-shadow: 0 0 6px rgba(184, 156, 255, 0.3);
+    }
+
+    @keyframes nodePulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    /* Audit Card */
+    .audit-card {
+      background: var(--bg-surface-mid);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      transition: all var(--transition-base);
+      cursor: pointer;
+    }
+
+    .audit-card:hover {
+      border-color: var(--steel-blue-dim);
+      box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(74, 140, 199, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .audit-card-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .audit-card-title {
+      font-size: 14px; font-weight: 600;
+      color: var(--on-surface); line-height: 1.4;
+    }
+
+    .audit-card-time {
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--outline); letter-spacing: 0.04em;
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    .audit-card-desc {
+      font-size: 13px; color: var(--on-surface-variant);
+      line-height: 1.55; margin-bottom: 10px;
+    }
+
+    .audit-card-meta {
+      display: flex; align-items: center; gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .audit-meta-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 10px;
+    }
+
+    .audit-meta-tag.system  { color: var(--steel-blue-bright); background: rgba(74,140,199,0.10); }
+    .audit-meta-tag.user    { color: var(--teal);              background: rgba(94,217,215,0.08); }
+    .audit-meta-tag.warning { color: var(--amber);             background: rgba(245,197,66,0.08); }
+    .audit-meta-tag.error   { color: var(--red);               background: rgba(255,107,107,0.08); }
+    .audit-meta-tag.success { color: var(--green);             background: rgba(102,217,160,0.08); }
+    .audit-meta-tag.auth    { color: var(--purple);            background: rgba(184,156,255,0.08); }
+
+    .audit-meta-user {
+      font-size: 11px; color: var(--outline);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .audit-meta-user .material-symbols-outlined { font-size: 14px; }
+
+    .audit-meta-id {
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--outline-variant); letter-spacing: 0.03em;
+      margin-left: auto;
+    }
+
+    /* Expand detail */
+    .audit-card-detail {
+      display: none;
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--white-5);
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--outline); line-height: 1.6;
+    }
+    .audit-card.expanded .audit-card-detail { display: block; }
+
+    .detail-row {
+      display: flex; gap: 12px; margin-bottom: 4px;
+    }
+    .detail-label {
+      color: var(--outline-variant); min-width: 100px;
+      text-transform: uppercase; letter-spacing: 0.06em; font-size: 9px;
+    }
+    .detail-value { color: var(--on-surface-variant); }
+
+    /* ===================================================================
+       STATS ROW
+       =================================================================== */
+    .audit-stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-bottom: 24px;
+    }
+    @media (max-width: 1000px) { .audit-stats-row { grid-template-columns: repeat(2, 1fr); } }
+
+    .audit-stat {
+      border-radius: var(--radius-md); padding: 16px;
+      text-align: center;
+      opacity: 0; animation: revealUp 0.5s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .audit-stat:nth-child(1) { animation-delay: 0.05s; }
+    .audit-stat:nth-child(2) { animation-delay: 0.10s; }
+    .audit-stat:nth-child(3) { animation-delay: 0.15s; }
+    .audit-stat:nth-child(4) { animation-delay: 0.20s; }
+
+    .audit-stat-value {
+      font-size: 28px; font-weight: 800; letter-spacing: -0.03em;
+      color: var(--on-surface); line-height: 1; margin-bottom: 4px;
+    }
+    .audit-stat-label {
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--outline);
+    }
+
+    /* ===================================================================
+       RESPONSIVE
+       =================================================================== */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-panel { left: 0 !important; padding: 20px 16px 40px; }
+      .nav-center { display: none; }
+      .panel-header { flex-direction: column; align-items: flex-start; }
+      .filter-chips { flex-direction: column; align-items: flex-start; }
+      .audit-search-wrapper { min-width: 100%; margin-left: 0; margin-top: 8px; }
+      .audit-stats-row { grid-template-columns: 1fr 1fr; }
+      .timeline-container { padding-left: 32px; }
+      .timeline-line { left: 11px; }
+      .timeline-date-header .date-dot { left: -29px; }
+      .timeline-node { left: -27px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================================================================
+       TOP NAVIGATION
+       ================================================================ -->
+  <nav class="top-nav" id="topNav">
+    <div class="nav-left">
+      <div class="nav-emblem">U</div>
+      <div class="nav-title">Urban Ops Authority</div>
+    </div>
+    <div class="nav-center">
+      <a href="index.html" class="nav-tab">Home</a>
+      <a href="dashboard.html" class="nav-tab">Dashboard</a>
+      <a href="complaints.html" class="nav-tab">Complaints</a>
+      <a href="workorders.html" class="nav-tab">Work Orders</a>
+      <a href="analytics.html" class="nav-tab">Analytics</a>
+      <a href="audit.html" class="nav-tab active">Audit Logs</a>
+      <a href="login.html" class="nav-tab">Login</a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" aria-label="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="badge"></span>
+      </button>
+      <button class="nav-icon-btn" aria-label="Search">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <div class="nav-avatar">AK</div>
+    </div>
+  </nav>
+
+  <!-- ================================================================
+       SIDEBAR
+       ================================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle">
+      <button id="sidebarToggle" aria-label="Toggle sidebar">
+        <span class="material-symbols-outlined">menu_open</span>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-item">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="label">Overview</span>
+      </a>
+      <a href="complaints.html" class="sidebar-item">
+        <span class="material-symbols-outlined">feedback</span>
+        <span class="label">Complaints</span>
+      </a>
+      <a href="workorders.html" class="sidebar-item">
+        <span class="material-symbols-outlined">assignment</span>
+        <span class="label">Work Orders</span>
+      </a>
+      <a href="analytics.html" class="sidebar-item">
+        <span class="material-symbols-outlined">query_stats</span>
+        <span class="label">Analytics</span>
+      </a>
+      <a href="audit.html" class="sidebar-item active">
+        <span class="material-symbols-outlined">shield</span>
+        <span class="label">Audit Logs</span>
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="material-symbols-outlined">settings</span>
+        <span class="label">Settings</span>
+      </a>
+      <div style="flex:1;"></div>
+      <a href="login.html" class="sidebar-item" style="margin-top:auto;">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="label">Logout</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-text">System v4.2.1 · Karnataka GOV</div>
+    </div>
+  </aside>
+
+  <!-- ================================================================
+       MAIN PANEL
+       ================================================================ -->
+  <main class="main-panel" id="mainPanel">
+
+    <!-- Header -->
+    <div class="panel-header">
+      <div>
+        <h1>Audit Log</h1>
+      </div>
+      <div class="panel-header-right">
+        <div class="live-badge">
+          <span class="dot"></span>
+          Real-time Audit Stream
+        </div>
+      </div>
+    </div>
+    <p class="panel-subtitle">Comprehensive system event log — all administrative actions, alerts, and status changes are recorded under Karnataka Digital Audit Protocol.</p>
+
+    <!-- Stats Row -->
+    <div class="audit-stats-row" id="auditStats">
+      <div class="audit-stat glass-frost">
+        <div class="audit-stat-value" data-count="14832">0</div>
+        <div class="audit-stat-label">Total Events</div>
+      </div>
+      <div class="audit-stat glass-frost">
+        <div class="audit-stat-value" data-count="342">0</div>
+        <div class="audit-stat-label">Today's Events</div>
+      </div>
+      <div class="audit-stat glass-frost">
+        <div class="audit-stat-value" data-count="48">0</div>
+        <div class="audit-stat-label">Active Users</div>
+      </div>
+      <div class="audit-stat glass-frost">
+        <div class="audit-stat-value" data-count="7">0</div>
+        <div class="audit-stat-label">Alerts Triggered</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Filter Chips -->
+    <div class="filter-chips" id="filterChips">
+      <span class="filter-chips-label">Filter:</span>
+      <button class="filter-chip active" data-filter="all">All Events</button>
+      <button class="filter-chip" data-filter="system">System</button>
+      <button class="filter-chip" data-filter="user">User Actions</button>
+      <button class="filter-chip" data-filter="auth">Authentication</button>
+      <button class="filter-chip" data-filter="alert">Alerts</button>
+      <button class="filter-chip" data-filter="resolution">Resolutions</button>
+
+      <div class="audit-search-wrapper">
+        <input type="text" class="audit-search" id="auditSearch" placeholder="Search audit events..." />
+        <span class="material-symbols-outlined">search</span>
+      </div>
+    </div>
+
+    <!-- Audit Timeline -->
+    <div class="timeline-container" id="timelineContainer">
+      <div class="timeline-line"></div>
+
+      <!-- === TODAY === -->
+      <div class="timeline-date-header">
+        <div class="date-dot"></div>
+        <div class="timeline-date-label">Today — 09 Jun 2026</div>
+      </div>
+
+      <!-- Entry 1 -->
+      <div class="timeline-entry" data-type="system">
+        <div class="timeline-node active"></div>
+        <div class="audit-card" id="card1">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Infrastructure Monitoring System — Heartbeat Check Passed</div>
+            <div class="audit-card-time">16:58:22 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            All 4,096 sensor nodes responded within acceptable latency thresholds. System integrity verified across 38 municipal ward zones.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag system">System</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">smart_toy</span>
+              Auto-Monitor v4.2
+            </span>
+            <span class="audit-meta-id">AUD-2026-98421</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">Latency (p95)</span><span class="detail-value">12ms</span></div>
+            <div class="detail-row"><span class="detail-label">Nodes Online</span><span class="detail-value">4,096 / 4,096</span></div>
+            <div class="detail-row"><span class="detail-label">Protocol</span><span class="detail-value">MQTT-TLS v1.3</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 2 -->
+      <div class="timeline-entry" data-type="alert">
+        <div class="timeline-node error"></div>
+        <div class="audit-card" id="card2">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Critical Alert — Jayanagar Sector 4 Pipeline Breach Escalated</div>
+            <div class="audit-card-time">14:22:15 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            Complaint CMP-2026-4281 auto-escalated to priority P0 after field team reported major pipeline rupture. Emergency response protocol initiated.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag error">Critical Alert</span>
+            <span class="audit-meta-tag warning">P0 Escalation</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">person</span>
+              Field Ops — Sgt. Ravi Kumar
+            </span>
+            <span class="audit-meta-id">AUD-2026-98420</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">Complaint</span><span class="detail-value">CMP-2026-4281</span></div>
+            <div class="detail-row"><span class="detail-label">Ward</span><span class="detail-value">Ward 38 — Jayanagar</span></div>
+            <div class="detail-row"><span class="detail-label">ETA Response</span><span class="detail-value">12 minutes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 3 -->
+      <div class="timeline-entry" data-type="user">
+        <div class="timeline-node system"></div>
+        <div class="audit-card" id="card3">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Work Order Generated — Marathahalli Pothole Cluster</div>
+            <div class="audit-card-time">12:08:44 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            Work order WO-2026-7842 dispatched to Road Defects division for deep pothole cluster repair on Outer Ring Road. Estimated completion: 48 hours.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag user">User Action</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">person</span>
+              Admin — Ananya Kulkarni
+            </span>
+            <span class="audit-meta-id">AUD-2026-98419</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">Work Order</span><span class="detail-value">WO-2026-7842</span></div>
+            <div class="detail-row"><span class="detail-label">Assigned To</span><span class="detail-value">Roads Div. — Team Delta</span></div>
+            <div class="detail-row"><span class="detail-label">Budget Code</span><span class="detail-value">INFRA-RD-2026-Q2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 4 -->
+      <div class="timeline-entry" data-type="auth">
+        <div class="timeline-node auth"></div>
+        <div class="audit-card" id="card4">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Authentication — Admin Login from New Device</div>
+            <div class="audit-card-time">09:14:02 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            Successful multi-factor authentication for user ananya.kulkarni@karnataka.gov.in from unrecognized device. Device fingerprint recorded.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag auth">Authentication</span>
+            <span class="audit-meta-tag system">MFA Verified</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">person</span>
+              ananya.kulkarni@karnataka.gov.in
+            </span>
+            <span class="audit-meta-id">AUD-2026-98418</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">IP Address</span><span class="detail-value">103.24.xx.xx (Bengaluru)</span></div>
+            <div class="detail-row"><span class="detail-label">Device</span><span class="detail-value">Chrome 126 · Windows 11</span></div>
+            <div class="detail-row"><span class="detail-label">MFA Method</span><span class="detail-value">TOTP (Google Authenticator)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 5 -->
+      <div class="timeline-entry" data-type="resolution">
+        <div class="timeline-node resolved"></div>
+        <div class="audit-card" id="card5">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Incident Resolved — Basavanagudi Drain Blockage Cleared</div>
+            <div class="audit-card-time">08:45:11 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            Complaint CMP-2026-4268 resolved. Maintenance crew cleared drain blockage and restored flow. Quality inspection passed by Ward 31 supervisor.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag success">Resolved</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">person</span>
+              Supervisor — Prakash Hegde
+            </span>
+            <span class="audit-meta-id">AUD-2026-98417</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">Complaint</span><span class="detail-value">CMP-2026-4268</span></div>
+            <div class="detail-row"><span class="detail-label">Resolution</span><span class="detail-value">4h 22m (within SLA)</span></div>
+            <div class="detail-row"><span class="detail-label">Quality</span><span class="detail-value">Passed — score 9.2/10</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- === YESTERDAY === -->
+      <div class="timeline-date-header">
+        <div class="date-dot"></div>
+        <div class="timeline-date-label">Yesterday — 08 Jun 2026</div>
+      </div>
+
+      <!-- Entry 6 -->
+      <div class="timeline-entry" data-type="system">
+        <div class="timeline-node system"></div>
+        <div class="audit-card" id="card6">
+          <div class="audit-card-top">
+            <div class="audit-card-title">System — Predictive Model v4.3 Deployed to Production</div>
+            <div class="audit-card-time">22:00:00 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            ML pipeline completed training cycle. New incident prediction model deployed with 97.3% accuracy (↑1.8% from v4.2). Auto-rollback configured.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag system">System</span>
+            <span class="audit-meta-tag success">Deploy Success</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">smart_toy</span>
+              CI/CD Pipeline
+            </span>
+            <span class="audit-meta-id">AUD-2026-98410</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">Model</span><span class="detail-value">incident_pred_v4.3.onnx</span></div>
+            <div class="detail-row"><span class="detail-label">Accuracy</span><span class="detail-value">97.3% (test set)</span></div>
+            <div class="detail-row"><span class="detail-label">Rollback</span><span class="detail-value">Auto in 15min if p95 &gt; 200ms</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 7 -->
+      <div class="timeline-entry" data-type="alert">
+        <div class="timeline-node warning"></div>
+        <div class="audit-card" id="card7">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Warning — Electrical Fault Detected in Marathahalli</div>
+            <div class="audit-card-time">18:35:20 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            Voltage anomaly detected at Substation MR-24. Automated load balancing engaged. BESCOM notified via API integration.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag warning">Warning</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">smart_toy</span>
+              Grid Monitor AI
+            </span>
+            <span class="audit-meta-id">AUD-2026-98408</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">Substation</span><span class="detail-value">MR-24 (Marathahalli)</span></div>
+            <div class="detail-row"><span class="detail-label">Deviation</span><span class="detail-value">±8.2% beyond threshold</span></div>
+            <div class="detail-row"><span class="detail-label">Auto-fix</span><span class="detail-value">Load redistributed in 340ms</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 8 -->
+      <div class="timeline-entry" data-type="auth">
+        <div class="timeline-node auth"></div>
+        <div class="audit-card" id="card8">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Authentication — Failed Login Attempt (3rd in 24h)</div>
+            <div class="audit-card-time">15:12:40 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            Third failed authentication attempt for user rajesh.patil@karnataka.gov.in. Account temporarily locked per security policy. NOC alert dispatched.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag auth">Authentication</span>
+            <span class="audit-meta-tag error">Account Locked</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">person</span>
+              rajesh.patil@karnataka.gov.in
+            </span>
+            <span class="audit-meta-id">AUD-2026-98405</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">IP Address</span><span class="detail-value">49.37.xx.xx (Mumbai — Suspicious)</span></div>
+            <div class="detail-row"><span class="detail-label">Lock Duration</span><span class="detail-value">30 minutes</span></div>
+            <div class="detail-row"><span class="detail-label">NOC Alert</span><span class="detail-value">SEC-2026-0412 dispatched</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry 9 -->
+      <div class="timeline-entry" data-type="user">
+        <div class="timeline-node system"></div>
+        <div class="audit-card" id="card9">
+          <div class="audit-card-top">
+            <div class="audit-card-title">Report Generated — Weekly Infrastructure Performance Digest</div>
+            <div class="audit-card-time">09:00:00 IST</div>
+          </div>
+          <div class="audit-card-desc">
+            Automated weekly digest generated and distributed to 24 stakeholders. Covers complaint trends, resolution metrics, and predictive maintenance alerts.
+          </div>
+          <div class="audit-card-meta">
+            <span class="audit-meta-tag system">Automated</span>
+            <span class="audit-meta-tag user">Report</span>
+            <span class="audit-meta-user">
+              <span class="material-symbols-outlined">smart_toy</span>
+              Report Engine v2.1
+            </span>
+            <span class="audit-meta-id">AUD-2026-98400</span>
+          </div>
+          <div class="audit-card-detail">
+            <div class="detail-row"><span class="detail-label">Recipients</span><span class="detail-value">24 stakeholders</span></div>
+            <div class="detail-row"><span class="detail-label">Report ID</span><span class="detail-value">RPT-2026-W23</span></div>
+            <div class="detail-row"><span class="detail-label">Format</span><span class="detail-value">PDF + Interactive Dashboard Link</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Load More -->
+    <div style="text-align: center; margin-top: 32px;">
+      <button id="loadMore" style="
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 10px 28px; font-size: 13px; font-weight: 600;
+        color: var(--on-surface-variant);
+        background: var(--bg-surface-mid);
+        border: 1px solid var(--outline-variant);
+        border-radius: var(--radius-md);
+        transition: all var(--transition-base);
+      ">
+        <span class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
+        Load Earlier Events
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ================================================================
+       SCRIPTS
+       ================================================================ -->
+  <script>
+    // =================================================================
+    // SIDEBAR TOGGLE
+    // =================================================================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      const icon = sidebarToggle.querySelector('.material-symbols-outlined');
+      icon.textContent = sidebar.classList.contains('collapsed') ? 'menu' : 'menu_open';
+    });
+
+    // =================================================================
+    // COUNT-UP ANIMATION
+    // =================================================================
+    function animateCount(el, target, duration = 1400) {
+      const startTime = performance.now();
+      function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target).toLocaleString();
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    setTimeout(() => {
+      document.querySelectorAll('.audit-stat-value[data-count]').forEach(el => {
+        animateCount(el, parseInt(el.dataset.count));
+      });
+    }, 300);
+
+    // =================================================================
+    // FILTER CHIPS — Active toggle + timeline filter
+    // =================================================================
+    const chips = document.querySelectorAll('.filter-chip');
+    const entries = document.querySelectorAll('.timeline-entry');
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        const filter = chip.dataset.filter;
+
+        entries.forEach(entry => {
+          if (filter === 'all' || entry.dataset.type === filter) {
+            entry.style.display = '';
+          } else {
+            entry.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // =================================================================
+    // SEARCH
+    // =================================================================
+    const auditSearch = document.getElementById('auditSearch');
+    auditSearch.addEventListener('input', () => {
+      const query = auditSearch.value.toLowerCase().trim();
+
+      // Reset chip to "All" when searching
+      if (query) {
+        chips.forEach(c => c.classList.remove('active'));
+        chips[0].classList.add('active');
+      }
+
+      entries.forEach(entry => {
+        const text = entry.textContent.toLowerCase();
+        entry.style.display = (!query || text.includes(query)) ? '' : 'none';
+      });
+    });
+
+    // =================================================================
+    // CARD EXPAND/COLLAPSE
+    // =================================================================
+    document.querySelectorAll('.audit-card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('expanded');
+      });
+    });
+
+    // =================================================================
+    // LOAD MORE (mock)
+    // =================================================================
+    document.getElementById('loadMore').addEventListener('click', function() {
+      this.innerHTML = `
+        <span class="material-symbols-outlined" style="font-size:18px;">check</span>
+        All events loaded
+      `;
+      this.style.color = 'var(--green)';
+      this.style.borderColor = 'var(--green-dim)';
+      this.style.cursor = 'default';
+    });
+
+    // =================================================================
+    // KEYBOARD: / to focus search
+    // =================================================================
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== auditSearch) {
+        e.preventDefault();
+        auditSearch.focus();
+      }
+    });
+  </script>
+</body>
+</html>

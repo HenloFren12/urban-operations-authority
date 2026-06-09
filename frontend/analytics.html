@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics | Urban Operations Authority — Government of Karnataka</title>
+  <meta name="description" content="Predictive analytics and data intelligence — Urban Operations Authority, Government of Karnataka." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    /* ===================================================================
+       DESIGN TOKENS
+       =================================================================== */
+    :root {
+      --bg-deep:            #030e1c;
+      --bg-base:            #051424;
+      --bg-surface:         #0d1c2d;
+      --bg-surface-mid:     #122131;
+      --bg-surface-high:    #1c2b3c;
+      --bg-surface-highest: #273647;
+      --bg-sidebar:         #040c18;
+
+      --steel-blue:         #4a8cc7;
+      --steel-blue-bright:  #6eaadf;
+      --steel-blue-dim:     #2f5d8a;
+      --primary:            #9fcafd;
+      --primary-container:  #2f5d8a;
+
+      --teal:               #5ed9d7;
+      --teal-bright:        #7df0ee;
+      --teal-dim:           #3db5b3;
+      --teal-deep:          #00504f;
+
+      --green:              #66d9a0;
+      --green-dim:          #2a7a50;
+      --red:                #ff6b6b;
+      --red-dim:            #93000a;
+      --amber:              #f5c542;
+      --amber-dim:          #8a6d00;
+      --purple:             #b89cff;
+      --purple-dim:         #6d4fc4;
+
+      --on-surface:         #d4e4fa;
+      --on-surface-variant: #a0afc4;
+      --outline:            #8c9199;
+      --outline-variant:    #42474f;
+
+      --error:              #ffb4ab;
+      --white-3:            rgba(255,255,255,0.03);
+      --white-5:            rgba(255,255,255,0.05);
+      --white-8:            rgba(255,255,255,0.08);
+      --white-12:           rgba(255,255,255,0.12);
+      --white-20:           rgba(255,255,255,0.20);
+
+      --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --transition-fast: 180ms cubic-bezier(.4,0,.2,1);
+      --transition-base: 300ms cubic-bezier(.4,0,.2,1);
+      --transition-slow: 500ms cubic-bezier(.4,0,.2,1);
+
+      --sidebar-width: 240px;
+      --sidebar-collapsed: 64px;
+      --topnav-height: 56px;
+    }
+
+    /* ===================================================================
+       RESET
+       =================================================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; height: 100%; }
+    body {
+      font-family: var(--font-primary);
+      background: var(--bg-base);
+      color: var(--on-surface);
+      height: 100%;
+      overflow: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; }
+    ul { list-style: none; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    /* ===================================================================
+       GLASS SURFACES
+       =================================================================== */
+    .glass-frost {
+      background: rgba(22, 36, 54, 0.55);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border: 1px solid var(--white-5);
+    }
+
+    /* ===================================================================
+       TOP NAVIGATION
+       =================================================================== */
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--topnav-height);
+      z-index: 200;
+      background: rgba(4, 12, 24, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--white-5);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .nav-left {
+      display: flex; align-items: center; gap: 12px; min-width: 200px;
+    }
+
+    .nav-emblem {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--steel-blue), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: var(--bg-deep);
+    }
+
+    .nav-title {
+      font-size: 14px; font-weight: 600;
+      letter-spacing: -0.01em; color: var(--on-surface);
+    }
+
+    .nav-center {
+      flex: 1; display: flex; align-items: center;
+      justify-content: center; gap: 4px;
+    }
+
+    .nav-tab {
+      padding: 7px 16px; font-size: 13px; font-weight: 500;
+      color: var(--on-surface-variant); border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+    .nav-tab:hover { color: var(--on-surface); opacity: 0.8; }
+    .nav-tab.active {
+      color: var(--primary);
+      background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+
+    .nav-right {
+      display: flex; align-items: center; gap: 16px;
+      min-width: 200px; justify-content: flex-end;
+    }
+
+    .nav-icon-btn {
+      position: relative; color: var(--on-surface-variant);
+      font-size: 20px; padding: 6px; border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .nav-icon-btn:hover { color: var(--on-surface); background: var(--white-5); }
+    .nav-icon-btn .badge {
+      position: absolute; top: 2px; right: 2px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--red); border: 2px solid var(--bg-sidebar);
+    }
+
+    .nav-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--bg-surface-high);
+      border: 1.5px solid var(--outline-variant);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--on-surface-variant);
+      cursor: pointer; transition: border-color var(--transition-fast);
+    }
+    .nav-avatar:hover { border-color: var(--primary); }
+
+    /* ===================================================================
+       SIDEBAR
+       =================================================================== */
+    .sidebar {
+      position: fixed; top: var(--topnav-height); left: 0; bottom: 0;
+      width: var(--sidebar-width); background: var(--bg-sidebar);
+      border-right: 1px solid var(--white-5); z-index: 100;
+      display: flex; flex-direction: column;
+      transition: width var(--transition-base); overflow: hidden;
+    }
+    .sidebar.collapsed { width: var(--sidebar-collapsed); }
+
+    .sidebar-toggle {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 12px 16px; border-bottom: 1px solid var(--white-5);
+    }
+    .sidebar-toggle button {
+      color: var(--outline); font-size: 20px; padding: 4px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .sidebar-toggle button:hover { color: var(--on-surface); background: var(--white-5); }
+
+    .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+
+    .sidebar-section-label {
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--outline-variant); padding: 16px 10px 8px;
+      white-space: nowrap; overflow: hidden;
+    }
+    .sidebar.collapsed .sidebar-section-label { opacity: 0; height: 0; padding: 0; }
+
+    .sidebar-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; font-size: 13px; font-weight: 500;
+      color: var(--on-surface-variant); border-radius: var(--radius-sm);
+      transition: all var(--transition-fast); white-space: nowrap;
+      cursor: pointer; margin-bottom: 2px;
+    }
+    .sidebar-item:hover { color: var(--on-surface); background: var(--white-3); opacity: 0.85; }
+    .sidebar-item.active {
+      color: var(--primary);
+      background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+    .sidebar-item .material-symbols-outlined { font-size: 20px; flex-shrink: 0; width: 20px; }
+    .sidebar-item .label { transition: opacity var(--transition-fast); }
+    .sidebar.collapsed .sidebar-item .label { opacity: 0; width: 0; overflow: hidden; }
+    .sidebar.collapsed .sidebar-item { justify-content: center; padding: 10px; }
+
+    .sidebar-footer {
+      padding: 12px 14px; border-top: 1px solid var(--white-5);
+      white-space: nowrap; overflow: hidden;
+    }
+    .sidebar-footer-text {
+      font-family: var(--font-mono); font-size: 9px;
+      color: var(--outline-variant); letter-spacing: 0.06em;
+    }
+    .sidebar.collapsed .sidebar-footer-text { opacity: 0; }
+
+    /* ===================================================================
+       MAIN PANEL
+       =================================================================== */
+    .main-panel {
+      position: fixed; top: var(--topnav-height);
+      left: var(--sidebar-width); right: 0; bottom: 0;
+      overflow-y: auto; overflow-x: hidden;
+      background: var(--bg-base);
+      transition: left var(--transition-base);
+      padding: 28px 32px 60px;
+    }
+    .sidebar.collapsed ~ .main-panel { left: var(--sidebar-collapsed); }
+
+    /* Scrollbar */
+    .main-panel::-webkit-scrollbar { width: 6px; }
+    .main-panel::-webkit-scrollbar-track { background: transparent; }
+    .main-panel::-webkit-scrollbar-thumb { background: var(--outline-variant); border-radius: 3px; }
+    .main-panel::-webkit-scrollbar-thumb:hover { background: var(--outline); }
+
+    /* ===================================================================
+       PANEL HEADER
+       =================================================================== */
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px; flex-wrap: wrap; gap: 16px;
+    }
+    .panel-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+
+    .panel-subtitle {
+      font-size: 13px; color: var(--outline); margin-bottom: 24px;
+    }
+
+    .panel-header-right { display: flex; align-items: center; gap: 12px; }
+
+    .data-updated-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 20px;
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--teal); background: rgba(94, 217, 215, 0.06);
+      border: 1px solid rgba(94, 217, 215, 0.12);
+    }
+    .data-updated-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--teal);
+      animation: livePulse 2.4s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* Export CSV Button */
+    .btn-export {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 20px; font-size: 13px; font-weight: 600;
+      color: var(--on-surface-variant);
+      background: var(--bg-surface-mid);
+      border: 1.5px solid var(--outline-variant);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-base);
+      position: relative; overflow: hidden;
+    }
+    .btn-export .material-symbols-outlined { font-size: 16px; }
+
+    /* Hover border animation — sweep highlight */
+    .btn-export::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(94, 217, 215, 0.08), transparent);
+      transition: left 0.6s cubic-bezier(.4,0,.2,1);
+    }
+    .btn-export:hover::before { left: 100%; }
+    .btn-export:hover {
+      border-color: var(--teal-dim);
+      color: var(--on-surface);
+      box-shadow: 0 0 16px rgba(94, 217, 215, 0.08);
+    }
+
+    /* ===================================================================
+       SECTION DIVIDER
+       =================================================================== */
+    .section-divider {
+      height: 1px; background: var(--white-5); margin: 24px 0;
+    }
+
+    /* ===================================================================
+       REVEAL ANIMATION
+       =================================================================== */
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===================================================================
+       KPI ROW
+       =================================================================== */
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 24px;
+    }
+    @media (max-width: 1100px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .kpi-row { grid-template-columns: 1fr; } }
+
+    .kpi-card {
+      border-radius: var(--radius-lg); padding: 20px;
+      position: relative; overflow: hidden;
+      opacity: 0; animation: revealUp 0.5s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+    .kpi-card:nth-child(2) { animation-delay: 0.10s; }
+    .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+    .kpi-card:nth-child(4) { animation-delay: 0.20s; }
+
+    .kpi-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; width: 100%; height: 3px;
+      border-radius: 3px 3px 0 0;
+    }
+    .kpi-card.accent-blue::after   { background: linear-gradient(90deg, var(--steel-blue), var(--steel-blue-bright)); }
+    .kpi-card.accent-teal::after   { background: linear-gradient(90deg, var(--teal-dim), var(--teal)); }
+    .kpi-card.accent-green::after  { background: linear-gradient(90deg, var(--green-dim), var(--green)); }
+    .kpi-card.accent-amber::after  { background: linear-gradient(90deg, var(--amber-dim), var(--amber)); }
+
+    .kpi-label {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--outline); margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-size: 32px; font-weight: 800; letter-spacing: -0.03em;
+      color: var(--on-surface); line-height: 1;
+    }
+    .kpi-trend {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; margin-top: 6px;
+      padding: 2px 8px; border-radius: 12px;
+    }
+    .kpi-trend.up   { color: var(--green); background: rgba(102,217,160,0.08); }
+    .kpi-trend.down { color: var(--red); background: rgba(255,107,107,0.08); }
+    .kpi-trend .material-symbols-outlined { font-size: 14px; }
+
+    /* ===================================================================
+       CHART PANELS
+       =================================================================== */
+    .charts-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 18px; margin-bottom: 18px;
+    }
+    @media (max-width: 1000px) { .charts-row { grid-template-columns: 1fr; } }
+
+    .chart-panel {
+      border-radius: var(--radius-lg); padding: 24px;
+      position: relative; overflow: hidden;
+      opacity: 0; animation: revealUp 0.55s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .chart-panel:nth-child(1) { animation-delay: 0.25s; }
+    .chart-panel:nth-child(2) { animation-delay: 0.35s; }
+
+    .chart-header {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 20px;
+    }
+    .chart-title { font-size: 15px; font-weight: 600; color: var(--on-surface); }
+    .chart-subtitle {
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--outline); letter-spacing: 0.06em;
+      text-transform: uppercase; margin-top: 2px;
+    }
+
+    .chart-actions { display: flex; gap: 6px; }
+    .chart-action-btn {
+      padding: 5px 12px; font-size: 11px; font-weight: 500;
+      color: var(--outline); border-radius: var(--radius-sm);
+      border: 1px solid var(--outline-variant);
+      transition: all var(--transition-fast);
+    }
+    .chart-action-btn:hover { color: var(--on-surface); border-color: var(--on-surface-variant); }
+    .chart-action-btn.active {
+      color: var(--primary); border-color: var(--primary);
+      background: rgba(159,202,253,0.06);
+    }
+
+    /* ===================================================================
+       BAR CHART
+       =================================================================== */
+    .bar-chart-container {
+      height: 260px; display: flex; align-items: flex-end;
+      gap: 12px; padding: 0 8px 0 0; position: relative;
+    }
+
+    .bar-chart-y-axis {
+      display: flex; flex-direction: column; justify-content: space-between;
+      height: 100%; padding-right: 8px; min-width: 36px;
+    }
+    .bar-chart-y-axis span {
+      font-family: var(--font-mono); font-size: 9px;
+      color: var(--outline-variant); text-align: right;
+    }
+
+    .bar-chart-grid {
+      position: absolute; top: 0; left: 44px; right: 8px; bottom: 24px;
+    }
+    .bar-chart-grid-line {
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: var(--white-3);
+    }
+
+    .bar-chart-bars {
+      display: flex; align-items: flex-end; gap: 12px;
+      flex: 1; height: 100%; padding-bottom: 24px;
+    }
+
+    .bar-group {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 8px; height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar-wrapper {
+      width: 100%; max-width: 48px; position: relative;
+      display: flex; align-items: flex-end;
+      gap: 4px; height: calc(100% - 20px);
+    }
+
+    .bar {
+      flex: 1; border-radius: 4px 4px 0 0;
+      height: 0;
+      transition: height 1.2s cubic-bezier(.16,1,.3,1);
+      position: relative; cursor: pointer;
+      min-width: 14px;
+    }
+    .bar:hover { filter: brightness(1.2); }
+
+    .bar.primary {
+      background: linear-gradient(180deg, var(--steel-blue-bright), var(--steel-blue));
+    }
+    .bar.secondary {
+      background: linear-gradient(180deg, var(--teal), var(--teal-dim));
+    }
+
+    .bar-label {
+      font-family: var(--font-mono); font-size: 9px;
+      color: var(--outline); letter-spacing: 0.04em;
+      text-align: center; white-space: nowrap;
+    }
+
+    /* Bar Tooltip */
+    .bar-tooltip {
+      position: absolute; bottom: calc(100% + 8px);
+      left: 50%; transform: translateX(-50%);
+      padding: 5px 10px; background: var(--bg-surface-highest);
+      border: 1px solid var(--white-12); border-radius: var(--radius-sm);
+      font-size: 11px; font-weight: 600; color: var(--on-surface);
+      white-space: nowrap; opacity: 0; pointer-events: none;
+      transition: opacity var(--transition-fast);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .bar:hover .bar-tooltip { opacity: 1; }
+
+    /* ===================================================================
+       PIE CHART
+       =================================================================== */
+    .pie-chart-container {
+      display: flex; align-items: center; gap: 32px;
+      height: 260px; justify-content: center;
+    }
+
+    .pie-svg {
+      width: 200px; height: 200px; flex-shrink: 0;
+    }
+
+    .pie-segment {
+      transition: stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1),
+                  stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1);
+      cursor: pointer;
+    }
+    .pie-segment:hover {
+      filter: brightness(1.25);
+      stroke-width: 28;
+    }
+
+    .pie-legend {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .pie-legend-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--on-surface-variant);
+    }
+    .pie-legend-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .pie-legend-value {
+      font-weight: 600; color: var(--on-surface);
+      margin-left: auto; font-family: var(--font-mono); font-size: 12px;
+    }
+
+    /* ===================================================================
+       AREA CHART (wide panel)
+       =================================================================== */
+    .wide-chart-panel {
+      border-radius: var(--radius-lg); padding: 24px;
+      position: relative; overflow: hidden;
+      opacity: 0; animation: revealUp 0.55s 0.45s cubic-bezier(.16,1,.3,1) forwards;
+      margin-bottom: 18px;
+    }
+
+    .area-chart-container {
+      width: 100%; height: 240px; position: relative;
+    }
+    .area-chart-container svg { width: 100%; height: 100%; }
+
+    /* Animated line draw */
+    .area-line {
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: drawLine 2s 0.8s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes drawLine {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .area-fill {
+      opacity: 0;
+      animation: fadeAreaFill 1s 1.5s ease forwards;
+    }
+    @keyframes fadeAreaFill {
+      to { opacity: 1; }
+    }
+
+    /* Tooltip dot */
+    .chart-dot {
+      transition: r 0.15s ease, opacity 0.15s ease;
+      cursor: pointer;
+    }
+    .chart-dot:hover { r: 7; opacity: 1 !important; }
+
+    .area-tooltip {
+      position: absolute; padding: 8px 14px;
+      background: var(--bg-surface-highest);
+      border: 1px solid var(--white-12); border-radius: var(--radius-sm);
+      font-size: 12px; font-weight: 500; color: var(--on-surface);
+      pointer-events: none; opacity: 0;
+      transition: opacity var(--transition-fast);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      z-index: 50; white-space: nowrap;
+    }
+    .area-tooltip.visible { opacity: 1; }
+    .area-tooltip-label {
+      font-family: var(--font-mono); font-size: 9px;
+      color: var(--outline); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-bottom: 2px;
+    }
+
+    /* ===================================================================
+       METRIC BREAKDOWN TABLE
+       =================================================================== */
+    .breakdown-panel {
+      border-radius: var(--radius-lg); padding: 24px;
+      opacity: 0; animation: revealUp 0.55s 0.55s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .breakdown-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 900px) { .breakdown-grid { grid-template-columns: 1fr; } }
+
+    .breakdown-card {
+      background: var(--bg-surface-mid);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--radius-md); padding: 18px;
+      transition: all var(--transition-base);
+    }
+    .breakdown-card:hover {
+      border-color: var(--steel-blue-dim);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+    }
+
+    .breakdown-card-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .breakdown-card-icon {
+      width: 36px; height: 36px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .breakdown-card-icon.water   { background: rgba(74,140,199,0.12); color: var(--steel-blue-bright); }
+    .breakdown-card-icon.roads   { background: rgba(94,217,215,0.12); color: var(--teal); }
+    .breakdown-card-icon.power   { background: rgba(255,180,171,0.10); color: var(--error); }
+    .breakdown-card-icon.waste   { background: rgba(159,202,253,0.10); color: var(--primary); }
+
+    .breakdown-card-title {
+      font-size: 14px; font-weight: 600; color: var(--on-surface);
+    }
+    .breakdown-card-sub {
+      font-family: var(--font-mono); font-size: 9px;
+      color: var(--outline); text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .breakdown-stats { display: flex; gap: 24px; }
+    .breakdown-stat { flex: 1; }
+    .breakdown-stat-value {
+      font-size: 22px; font-weight: 700; color: var(--on-surface);
+      line-height: 1; margin-bottom: 4px;
+    }
+    .breakdown-stat-label {
+      font-size: 11px; color: var(--outline);
+    }
+
+    .breakdown-bar {
+      width: 100%; height: 4px;
+      background: var(--outline-variant); border-radius: 4px;
+      margin-top: 12px; overflow: hidden;
+    }
+    .breakdown-bar-fill {
+      height: 100%; border-radius: 4px;
+      background: linear-gradient(90deg, var(--steel-blue), var(--teal));
+      width: 0;
+      transition: width 1.5s 0.6s cubic-bezier(.16,1,.3,1);
+    }
+
+    /* ===================================================================
+       RESPONSIVE
+       =================================================================== */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-panel { left: 0 !important; padding: 20px 16px 40px; }
+      .nav-center { display: none; }
+      .panel-header { flex-direction: column; align-items: flex-start; }
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+      .pie-chart-container { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================================================================
+       TOP NAVIGATION
+       ================================================================ -->
+  <nav class="top-nav" id="topNav">
+    <div class="nav-left">
+      <div class="nav-emblem">U</div>
+      <div class="nav-title">Urban Ops Authority</div>
+    </div>
+    <div class="nav-center">
+      <a href="index.html" class="nav-tab">Home</a>
+      <a href="dashboard.html" class="nav-tab">Dashboard</a>
+      <a href="complaints.html" class="nav-tab">Complaints</a>
+      <a href="workorders.html" class="nav-tab">Work Orders</a>
+      <a href="analytics.html" class="nav-tab active">Analytics</a>
+      <a href="audit.html" class="nav-tab">Audit Logs</a>
+      <a href="login.html" class="nav-tab">Login</a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" aria-label="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="badge"></span>
+      </button>
+      <button class="nav-icon-btn" aria-label="Search">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <div class="nav-avatar">AK</div>
+    </div>
+  </nav>
+
+  <!-- ================================================================
+       SIDEBAR
+       ================================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle">
+      <button id="sidebarToggle" aria-label="Toggle sidebar">
+        <span class="material-symbols-outlined">menu_open</span>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-item">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="label">Overview</span>
+      </a>
+      <a href="complaints.html" class="sidebar-item">
+        <span class="material-symbols-outlined">feedback</span>
+        <span class="label">Complaints</span>
+      </a>
+      <a href="workorders.html" class="sidebar-item">
+        <span class="material-symbols-outlined">assignment</span>
+        <span class="label">Work Orders</span>
+      </a>
+      <a href="analytics.html" class="sidebar-item active">
+        <span class="material-symbols-outlined">query_stats</span>
+        <span class="label">Analytics</span>
+      </a>
+      <a href="audit.html" class="sidebar-item">
+        <span class="material-symbols-outlined">shield</span>
+        <span class="label">Audit Logs</span>
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="material-symbols-outlined">settings</span>
+        <span class="label">Settings</span>
+      </a>
+      <div style="flex:1;"></div>
+      <a href="login.html" class="sidebar-item" style="margin-top:auto;">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="label">Logout</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-text">System v4.2.1 · Karnataka GOV</div>
+    </div>
+  </aside>
+
+  <!-- ================================================================
+       MAIN PANEL
+       ================================================================ -->
+  <main class="main-panel" id="mainPanel">
+
+    <!-- Header -->
+    <div class="panel-header">
+      <div>
+        <h1>Predictive Analytics</h1>
+      </div>
+      <div class="panel-header-right">
+        <div class="data-updated-badge">
+          <span class="dot"></span>
+          Data Updated 3 minutes ago
+        </div>
+        <button class="btn-export" id="btnExport">
+          <span class="material-symbols-outlined">download</span>
+          Export CSV
+        </button>
+      </div>
+    </div>
+    <p class="panel-subtitle">Infrastructure performance metrics & incident analytics — Bengaluru Metropolitan Region</p>
+
+    <!-- KPI Row -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi-card glass-frost accent-blue">
+        <div class="kpi-label">Avg Response Time</div>
+        <div class="kpi-value" id="kpiResponse">—</div>
+        <div class="kpi-trend up">
+          <span class="material-symbols-outlined">trending_down</span>
+          -18% from last month
+        </div>
+      </div>
+      <div class="kpi-card glass-frost accent-teal">
+        <div class="kpi-label">Resolution Rate</div>
+        <div class="kpi-value" id="kpiResolution">—</div>
+        <div class="kpi-trend up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +4.2% this quarter
+        </div>
+      </div>
+      <div class="kpi-card glass-frost accent-green">
+        <div class="kpi-label">Citizen Satisfaction</div>
+        <div class="kpi-value" id="kpiSatisfaction">—</div>
+        <div class="kpi-trend up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +2.1% improvement
+        </div>
+      </div>
+      <div class="kpi-card glass-frost accent-amber">
+        <div class="kpi-label">Predictive Accuracy</div>
+        <div class="kpi-value" id="kpiAccuracy">—</div>
+        <div class="kpi-trend up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +1.8% model update
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Bar + Pie Charts -->
+    <div class="charts-row">
+      <!-- Bar Chart -->
+      <div class="chart-panel glass-frost" id="barChartPanel">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Monthly Incident Volume</div>
+            <div class="chart-subtitle">Complaints vs Resolutions · 2026</div>
+          </div>
+          <div class="chart-actions">
+            <button class="chart-action-btn active">6M</button>
+            <button class="chart-action-btn">1Y</button>
+          </div>
+        </div>
+        <div class="bar-chart-container" id="barChart">
+          <div class="bar-chart-y-axis">
+            <span>500</span><span>400</span><span>300</span><span>200</span><span>100</span><span>0</span>
+          </div>
+          <div class="bar-chart-grid">
+            <div class="bar-chart-grid-line" style="top:0%"></div>
+            <div class="bar-chart-grid-line" style="top:20%"></div>
+            <div class="bar-chart-grid-line" style="top:40%"></div>
+            <div class="bar-chart-grid-line" style="top:60%"></div>
+            <div class="bar-chart-grid-line" style="top:80%"></div>
+          </div>
+          <div class="bar-chart-bars" id="barChartBars">
+            <!-- JS generated -->
+          </div>
+        </div>
+        <div style="display: flex; gap: 18px; margin-top: 14px; justify-content: center;">
+          <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--outline);">
+            <div style="width:10px;height:10px;border-radius:3px;background:var(--steel-blue);"></div>
+            Filed
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--outline);">
+            <div style="width:10px;height:10px;border-radius:3px;background:var(--teal);"></div>
+            Resolved
+          </div>
+        </div>
+      </div>
+
+      <!-- Pie Chart -->
+      <div class="chart-panel glass-frost" id="pieChartPanel">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Complaint Distribution</div>
+            <div class="chart-subtitle">By complaint category · current month</div>
+          </div>
+        </div>
+        <div class="pie-chart-container">
+          <svg class="pie-svg" viewBox="0 0 160 160" id="pieSvg">
+            <circle cx="80" cy="80" r="62" fill="none" stroke="var(--outline-variant)" stroke-width="24" opacity="0.1"/>
+            <!-- Pie segments drawn by JS -->
+          </svg>
+          <div class="pie-legend" id="pieLegend">
+            <!-- JS generated -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Area Chart (wide) -->
+    <div class="wide-chart-panel glass-frost" id="areaPanel">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Operational Load Trend</div>
+          <div class="chart-subtitle">24-hour rolling average · 30 day view</div>
+        </div>
+        <div class="chart-actions">
+          <button class="chart-action-btn">7D</button>
+          <button class="chart-action-btn active">30D</button>
+          <button class="chart-action-btn">90D</button>
+        </div>
+      </div>
+      <div class="area-chart-container" id="areaChart">
+        <div class="area-tooltip" id="areaTooltip">
+          <div class="area-tooltip-label">Load Index</div>
+          <div id="areaTooltipValue">—</div>
+        </div>
+        <svg viewBox="0 0 800 200" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(74,140,199,0.25)" />
+              <stop offset="100%" stop-color="rgba(74,140,199,0)" />
+            </linearGradient>
+            <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4a8cc7" />
+              <stop offset="100%" stop-color="#5ed9d7" />
+            </linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="0" y1="50"  x2="800" y2="50"  stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <line x1="0" y1="100" x2="800" y2="100" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <line x1="0" y1="150" x2="800" y2="150" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <!-- Area fill -->
+          <path class="area-fill"
+            d="M0,160 C30,150 60,120 100,125 C140,130 170,80 220,85 C270,90 300,55 350,50
+               C400,45 430,75 480,65 C530,55 560,35 620,40 C680,45 720,30 800,25
+               L800,200 L0,200 Z"
+            fill="url(#areaGrad)" />
+          <!-- Line -->
+          <path class="area-line"
+            d="M0,160 C30,150 60,120 100,125 C140,130 170,80 220,85 C270,90 300,55 350,50
+               C400,45 430,75 480,65 C530,55 560,35 620,40 C680,45 720,30 800,25"
+            fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Data dots -->
+          <circle class="chart-dot" cx="0"   cy="160" r="4" fill="#4a8cc7" opacity="0" data-val="842"/>
+          <circle class="chart-dot" cx="100" cy="125" r="4" fill="#4a8cc7" opacity="0" data-val="960"/>
+          <circle class="chart-dot" cx="220" cy="85"  r="4" fill="#5199cc" opacity="0" data-val="1124"/>
+          <circle class="chart-dot" cx="350" cy="50"  r="4" fill="#58b8c8" opacity="0" data-val="1280"/>
+          <circle class="chart-dot" cx="480" cy="65"  r="4" fill="#56c8c7" opacity="0" data-val="1210"/>
+          <circle class="chart-dot" cx="620" cy="40"  r="4" fill="#5ad4d2" opacity="0" data-val="1350"/>
+          <circle class="chart-dot" cx="800" cy="25"  r="4" fill="#5ed9d7" opacity="0" data-val="1420"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Breakdown Cards -->
+    <div class="breakdown-panel glass-frost" id="breakdownPanel">
+      <div class="chart-header" style="margin-bottom: 18px;">
+        <div>
+          <div class="chart-title">Domain Performance Breakdown</div>
+          <div class="chart-subtitle">Per-domain metrics · last 30 days</div>
+        </div>
+      </div>
+      <div class="breakdown-grid" id="breakdownGrid">
+        <div class="breakdown-card">
+          <div class="breakdown-card-header">
+            <div class="breakdown-card-icon water"><span class="material-symbols-outlined">water_drop</span></div>
+            <div>
+              <div class="breakdown-card-title">Water Issues</div>
+              <div class="breakdown-card-sub">38 ward zones active</div>
+            </div>
+          </div>
+          <div class="breakdown-stats">
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">847</div>
+              <div class="breakdown-stat-label">Incidents Filed</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">94.2%</div>
+              <div class="breakdown-stat-label">Resolution Rate</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">4.2h</div>
+              <div class="breakdown-stat-label">Avg Response</div>
+            </div>
+          </div>
+          <div class="breakdown-bar"><div class="breakdown-bar-fill" data-width="94"></div></div>
+        </div>
+        <div class="breakdown-card">
+          <div class="breakdown-card-header">
+            <div class="breakdown-card-icon roads"><span class="material-symbols-outlined">road</span></div>
+            <div>
+              <div class="breakdown-card-title">Road Defects</div>
+              <div class="breakdown-card-sub">24 arterial corridors</div>
+            </div>
+          </div>
+          <div class="breakdown-stats">
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">612</div>
+              <div class="breakdown-stat-label">Incidents Filed</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">88.7%</div>
+              <div class="breakdown-stat-label">Resolution Rate</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">6.8h</div>
+              <div class="breakdown-stat-label">Avg Response</div>
+            </div>
+          </div>
+          <div class="breakdown-bar"><div class="breakdown-bar-fill" data-width="88"></div></div>
+        </div>
+        <div class="breakdown-card">
+          <div class="breakdown-card-header">
+            <div class="breakdown-card-icon power"><span class="material-symbols-outlined">bolt</span></div>
+            <div>
+              <div class="breakdown-card-title">Electrical Faults</div>
+              <div class="breakdown-card-sub">12 substation clusters</div>
+            </div>
+          </div>
+          <div class="breakdown-stats">
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">423</div>
+              <div class="breakdown-stat-label">Incidents Filed</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">91.5%</div>
+              <div class="breakdown-stat-label">Resolution Rate</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">3.1h</div>
+              <div class="breakdown-stat-label">Avg Response</div>
+            </div>
+          </div>
+          <div class="breakdown-bar"><div class="breakdown-bar-fill" data-width="91"></div></div>
+        </div>
+        <div class="breakdown-card">
+          <div class="breakdown-card-header">
+            <div class="breakdown-card-icon waste"><span class="material-symbols-outlined">delete</span></div>
+            <div>
+              <div class="breakdown-card-title">Drainage Blockages</div>
+              <div class="breakdown-card-sub">156 collection routes</div>
+            </div>
+          </div>
+          <div class="breakdown-stats">
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">965</div>
+              <div class="breakdown-stat-label">Incidents Filed</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">96.8%</div>
+              <div class="breakdown-stat-label">Resolution Rate</div>
+            </div>
+            <div class="breakdown-stat">
+              <div class="breakdown-stat-value">2.4h</div>
+              <div class="breakdown-stat-label">Avg Response</div>
+            </div>
+          </div>
+          <div class="breakdown-bar"><div class="breakdown-bar-fill" data-width="96"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================================================================
+       SCRIPTS
+       ================================================================ -->
+  <script>
+    // =================================================================
+    // SIDEBAR TOGGLE
+    // =================================================================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      const icon = sidebarToggle.querySelector('.material-symbols-outlined');
+      icon.textContent = sidebar.classList.contains('collapsed') ? 'menu' : 'menu_open';
+    });
+
+    // =================================================================
+    // KPI ANIMATED VALUES
+    // =================================================================
+    function animateKpiText(el, finalText, duration = 1200) {
+      el.textContent = finalText;
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(8px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      requestAnimationFrame(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      });
+    }
+
+    setTimeout(() => {
+      animateKpiText(document.getElementById('kpiResponse'), '6.2 min');
+      setTimeout(() => animateKpiText(document.getElementById('kpiResolution'), '94.8%'), 100);
+      setTimeout(() => animateKpiText(document.getElementById('kpiSatisfaction'), '4.6 / 5'), 200);
+      setTimeout(() => animateKpiText(document.getElementById('kpiAccuracy'), '97.3%'), 300);
+    }, 300);
+
+    // =================================================================
+    // BAR CHART — Animated Growth
+    // =================================================================
+    const barData = [
+      { month: 'Jan', filed: 380, resolved: 340 },
+      { month: 'Feb', filed: 410, resolved: 375 },
+      { month: 'Mar', filed: 350, resolved: 330 },
+      { month: 'Apr', filed: 480, resolved: 420 },
+      { month: 'May', filed: 445, resolved: 430 },
+      { month: 'Jun', filed: 390, resolved: 385 },
+    ];
+
+    const maxVal = 500;
+    const barsContainer = document.getElementById('barChartBars');
+
+    barData.forEach((d, i) => {
+      const group = document.createElement('div');
+      group.className = 'bar-group';
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'bar-wrapper';
+
+      // Filed bar
+      const filedBar = document.createElement('div');
+      filedBar.className = 'bar primary';
+      filedBar.innerHTML = `<div class="bar-tooltip">${d.filed} filed</div>`;
+
+      // Resolved bar
+      const resolvedBar = document.createElement('div');
+      resolvedBar.className = 'bar secondary';
+      resolvedBar.innerHTML = `<div class="bar-tooltip">${d.resolved} resolved</div>`;
+
+      wrapper.appendChild(filedBar);
+      wrapper.appendChild(resolvedBar);
+
+      const label = document.createElement('div');
+      label.className = 'bar-label';
+      label.textContent = d.month;
+
+      group.appendChild(wrapper);
+      group.appendChild(label);
+      barsContainer.appendChild(group);
+
+      // Animate growth with delay
+      setTimeout(() => {
+        filedBar.style.height = `${(d.filed / maxVal) * 100}%`;
+        resolvedBar.style.height = `${(d.resolved / maxVal) * 100}%`;
+      }, 400 + i * 120);
+    });
+
+    // =================================================================
+    // PIE CHART — Smooth Animated Transitions
+    // =================================================================
+    const pieData = [
+      { label: 'Water Issues',        value: 34, color: '#4a8cc7' },
+      { label: 'Road Defects',        value: 24, color: '#5ed9d7' },
+      { label: 'Electrical Faults',   value: 17, color: '#f5c542' },
+      { label: 'Drainage Blockages',  value: 15, color: '#66d9a0' },
+      { label: 'Other',               value: 10, color: '#b89cff' },
+    ];
+
+    const pieSvg = document.getElementById('pieSvg');
+    const pieLegend = document.getElementById('pieLegend');
+    const circumference = 2 * Math.PI * 62; // r = 62
+    let currentOffset = 0;
+
+    pieData.forEach((d, i) => {
+      const segmentLength = (d.value / 100) * circumference;
+      const gap = 4; // visual gap between segments
+
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', '80');
+      circle.setAttribute('cy', '80');
+      circle.setAttribute('r', '62');
+      circle.setAttribute('fill', 'none');
+      circle.setAttribute('stroke', d.color);
+      circle.setAttribute('stroke-width', '24');
+      circle.setAttribute('stroke-linecap', 'round');
+      circle.setAttribute('transform', 'rotate(-90 80 80)');
+      circle.classList.add('pie-segment');
+
+      // Start with 0 and animate
+      circle.setAttribute('stroke-dasharray', `0 ${circumference}`);
+      circle.setAttribute('stroke-dashoffset', `${-currentOffset}`);
+
+      pieSvg.appendChild(circle);
+
+      // Animate after delay
+      setTimeout(() => {
+        circle.setAttribute('stroke-dasharray', `${segmentLength - gap} ${circumference - segmentLength + gap}`);
+      }, 500 + i * 200);
+
+      currentOffset += segmentLength;
+
+      // Legend
+      const legendItem = document.createElement('div');
+      legendItem.className = 'pie-legend-item';
+      legendItem.innerHTML = `
+        <div class="pie-legend-dot" style="background:${d.color}"></div>
+        ${d.label}
+        <span class="pie-legend-value">${d.value}%</span>
+      `;
+      pieLegend.appendChild(legendItem);
+    });
+
+    // Center label
+    const centerText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    centerText.setAttribute('x', '80');
+    centerText.setAttribute('y', '76');
+    centerText.setAttribute('text-anchor', 'middle');
+    centerText.setAttribute('fill', 'var(--on-surface)');
+    centerText.setAttribute('font-size', '20');
+    centerText.setAttribute('font-weight', '700');
+    centerText.setAttribute('font-family', 'Inter');
+    centerText.textContent = '2,847';
+    pieSvg.appendChild(centerText);
+
+    const centerSub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    centerSub.setAttribute('x', '80');
+    centerSub.setAttribute('y', '92');
+    centerSub.setAttribute('text-anchor', 'middle');
+    centerSub.setAttribute('fill', 'var(--outline)');
+    centerSub.setAttribute('font-size', '8');
+    centerSub.setAttribute('font-family', 'JetBrains Mono');
+    centerSub.setAttribute('letter-spacing', '0.06em');
+    centerSub.textContent = 'TOTAL';
+    pieSvg.appendChild(centerSub);
+
+    // =================================================================
+    // AREA CHART TOOLTIP
+    // =================================================================
+    const areaChartEl = document.getElementById('areaChart');
+    const areaTooltip = document.getElementById('areaTooltip');
+    const areaTooltipValue = document.getElementById('areaTooltipValue');
+    const dots = areaChartEl.querySelectorAll('.chart-dot');
+
+    dots.forEach(dot => {
+      dot.addEventListener('mouseenter', () => {
+        dot.setAttribute('opacity', '1');
+        dot.setAttribute('r', '7');
+        areaTooltipValue.textContent = parseInt(dot.dataset.val).toLocaleString();
+
+        const rect = areaChartEl.getBoundingClientRect();
+        const svgRect = areaChartEl.querySelector('svg').getBoundingClientRect();
+        const cx = parseFloat(dot.getAttribute('cx'));
+        const cy = parseFloat(dot.getAttribute('cy'));
+
+        const xRatio = cx / 800;
+        const yRatio = cy / 200;
+        const tooltipX = xRatio * svgRect.width + (svgRect.left - rect.left);
+        const tooltipY = yRatio * svgRect.height + (svgRect.top - rect.top);
+
+        areaTooltip.style.left = tooltipX + 'px';
+        areaTooltip.style.top = (tooltipY - 50) + 'px';
+        areaTooltip.classList.add('visible');
+      });
+
+      dot.addEventListener('mouseleave', () => {
+        dot.setAttribute('opacity', '0');
+        dot.setAttribute('r', '4');
+        areaTooltip.classList.remove('visible');
+      });
+    });
+
+    // =================================================================
+    // BREAKDOWN BAR ANIMATION (Intersection Observer)
+    // =================================================================
+    const breakdownGrid = document.getElementById('breakdownGrid');
+    const breakdownObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.breakdown-bar-fill').forEach(fill => {
+            fill.style.width = fill.dataset.width + '%';
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+
+    breakdownObserver.observe(breakdownGrid);
+
+    // =================================================================
+    // CHART TAB TOGGLE (visual)
+    // =================================================================
+    document.querySelectorAll('.chart-actions').forEach(group => {
+      group.querySelectorAll('.chart-action-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.chart-action-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
+
+    // =================================================================
+    // EXPORT CSV BUTTON (mock)
+    // =================================================================
+    document.getElementById('btnExport').addEventListener('click', () => {
+      const btn = document.getElementById('btnExport');
+      const origText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span> Exported';
+      btn.style.borderColor = 'var(--green)';
+      btn.style.color = 'var(--green)';
+      setTimeout(() => {
+        btn.innerHTML = origText;
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complaints | Urban Operations Authority — Government of Karnataka</title>
+  <meta name="description" content="Civic complaint management portal — Urban Operations Authority, Government of Karnataka. Track, resolve, and manage infrastructure complaints." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    /* ===================================================================
+       DESIGN TOKENS
+       =================================================================== */
+    :root {
+      --bg-deep:            #030e1c;
+      --bg-base:            #051424;
+      --bg-surface:         #0d1c2d;
+      --bg-surface-mid:     #122131;
+      --bg-surface-high:    #1c2b3c;
+      --bg-surface-highest: #273647;
+      --bg-sidebar:         #040c18;
+
+      --steel-blue:         #4a8cc7;
+      --steel-blue-bright:  #6eaadf;
+      --steel-blue-dim:     #2f5d8a;
+      --primary:            #9fcafd;
+      --primary-container:  #2f5d8a;
+
+      --teal:               #5ed9d7;
+      --teal-bright:        #7df0ee;
+      --teal-dim:           #3db5b3;
+      --teal-deep:          #00504f;
+
+      --green:              #66d9a0;
+      --green-dim:          #2a7a50;
+      --red:                #ff6b6b;
+      --red-dim:            #93000a;
+      --amber:              #f5c542;
+      --amber-dim:          #8a6d00;
+
+      --on-surface:         #d4e4fa;
+      --on-surface-variant: #a0afc4;
+      --outline:            #8c9199;
+      --outline-variant:    #42474f;
+
+      --error:              #ffb4ab;
+      --white-3:            rgba(255,255,255,0.03);
+      --white-5:            rgba(255,255,255,0.05);
+      --white-8:            rgba(255,255,255,0.08);
+      --white-12:           rgba(255,255,255,0.12);
+      --white-20:           rgba(255,255,255,0.20);
+
+      --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --transition-fast: 180ms cubic-bezier(.4,0,.2,1);
+      --transition-base: 300ms cubic-bezier(.4,0,.2,1);
+      --transition-slow: 500ms cubic-bezier(.4,0,.2,1);
+
+      --sidebar-width: 240px;
+      --sidebar-collapsed: 64px;
+      --topnav-height: 56px;
+    }
+
+    /* ===================================================================
+       RESET
+       =================================================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; height: 100%; }
+    body {
+      font-family: var(--font-primary);
+      background: var(--bg-base);
+      color: var(--on-surface);
+      height: 100%;
+      overflow: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; }
+    ul { list-style: none; }
+    input, select { font-family: inherit; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    /* ===================================================================
+       GLASS SURFACES
+       =================================================================== */
+    .glass {
+      background: rgba(30, 43, 60, 0.40);
+      backdrop-filter: blur(14px) saturate(1.3);
+      -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      border: 1px solid var(--white-8);
+    }
+
+    .glass-frost {
+      background: rgba(22, 36, 54, 0.55);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border: 1px solid var(--white-5);
+    }
+
+    /* ===================================================================
+       TOP NAVIGATION
+       =================================================================== */
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--topnav-height);
+      z-index: 200;
+      background: rgba(4, 12, 24, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--white-5);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 200px;
+    }
+
+    .nav-emblem {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--steel-blue), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: var(--bg-deep);
+    }
+
+    .nav-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--on-surface);
+    }
+
+    .nav-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-tab:hover { color: var(--on-surface); opacity: 0.8; }
+
+    .nav-tab.active {
+      color: var(--primary);
+      background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 200px;
+      justify-content: flex-end;
+    }
+
+    .nav-icon-btn {
+      position: relative;
+      color: var(--on-surface-variant);
+      font-size: 20px;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .nav-icon-btn:hover { color: var(--on-surface); background: var(--white-5); }
+    .nav-icon-btn .badge {
+      position: absolute; top: 2px; right: 2px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--red); border: 2px solid var(--bg-sidebar);
+    }
+
+    .nav-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--bg-surface-high);
+      border: 1.5px solid var(--outline-variant);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+    }
+    .nav-avatar:hover { border-color: var(--primary); }
+
+    /* ===================================================================
+       SIDEBAR
+       =================================================================== */
+    .sidebar {
+      position: fixed;
+      top: var(--topnav-height);
+      left: 0; bottom: 0;
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--white-5);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      transition: width var(--transition-base);
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed { width: var(--sidebar-collapsed); }
+
+    .sidebar-toggle {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--white-5);
+    }
+
+    .sidebar-toggle button {
+      color: var(--outline); font-size: 20px; padding: 4px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .sidebar-toggle button:hover { color: var(--on-surface); background: var(--white-5); }
+
+    .sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+
+    .sidebar-section-label {
+      font-family: var(--font-mono);
+      font-size: 9px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--outline-variant);
+      padding: 16px 10px 8px; white-space: nowrap; overflow: hidden;
+    }
+    .sidebar.collapsed .sidebar-section-label { opacity: 0; height: 0; padding: 0; }
+
+    .sidebar-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; font-size: 13px; font-weight: 500;
+      color: var(--on-surface-variant); border-radius: var(--radius-sm);
+      transition: all var(--transition-fast); white-space: nowrap;
+      cursor: pointer; margin-bottom: 2px;
+    }
+    .sidebar-item:hover { color: var(--on-surface); background: var(--white-3); opacity: 0.85; }
+    .sidebar-item.active {
+      color: var(--primary);
+      background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+    .sidebar-item .material-symbols-outlined { font-size: 20px; flex-shrink: 0; width: 20px; }
+    .sidebar-item .label { transition: opacity var(--transition-fast); }
+    .sidebar.collapsed .sidebar-item .label { opacity: 0; width: 0; overflow: hidden; }
+    .sidebar.collapsed .sidebar-item { justify-content: center; padding: 10px; }
+
+    .sidebar-footer {
+      padding: 12px 14px; border-top: 1px solid var(--white-5);
+      white-space: nowrap; overflow: hidden;
+    }
+    .sidebar-footer-text {
+      font-family: var(--font-mono); font-size: 9px;
+      color: var(--outline-variant); letter-spacing: 0.06em;
+    }
+    .sidebar.collapsed .sidebar-footer-text { opacity: 0; }
+
+    /* ===================================================================
+       MAIN PANEL
+       =================================================================== */
+    .main-panel {
+      position: fixed;
+      top: var(--topnav-height);
+      left: var(--sidebar-width);
+      right: 0; bottom: 0;
+      overflow-y: auto; overflow-x: hidden;
+      background: var(--bg-base);
+      transition: left var(--transition-base);
+      padding: 28px 32px 48px;
+    }
+    .sidebar.collapsed ~ .main-panel { left: var(--sidebar-collapsed); }
+
+    /* ===================================================================
+       PANEL HEADER
+       =================================================================== */
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 28px;
+    }
+    .panel-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+    .panel-header-right { display: flex; align-items: center; gap: 12px; }
+
+    .header-badge {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 20px;
+      font-family: var(--font-mono); font-size: 11px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .header-badge.info {
+      color: var(--steel-blue-bright);
+      background: rgba(74, 140, 199, 0.08);
+      border: 1px solid rgba(74, 140, 199, 0.15);
+    }
+
+    .btn-new-complaint {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 20px; font-size: 13px; font-weight: 600;
+      background: var(--steel-blue); color: #fff;
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 16px rgba(74, 140, 199, 0.2);
+      transition: all var(--transition-base);
+    }
+    .btn-new-complaint:hover {
+      background: var(--steel-blue-bright);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(74, 140, 199, 0.35);
+    }
+    .btn-new-complaint .material-symbols-outlined { font-size: 18px; }
+
+    /* ===================================================================
+       COMPLAINT STATS BAR
+       =================================================================== */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 24px;
+    }
+    @media (max-width: 1000px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .stats-bar { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      border-radius: var(--radius-lg); padding: 20px;
+      position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(14px);
+      animation: revealUp 0.5s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .stat-card:nth-child(1) { animation-delay: 0.06s; }
+    .stat-card:nth-child(2) { animation-delay: 0.12s; }
+    .stat-card:nth-child(3) { animation-delay: 0.18s; }
+    .stat-card:nth-child(4) { animation-delay: 0.24s; }
+
+    @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+
+    .stat-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; width: 100%; height: 3px;
+      border-radius: 3px 3px 0 0;
+    }
+    .stat-card.accent-blue::after    { background: linear-gradient(90deg, var(--steel-blue), var(--steel-blue-bright)); }
+    .stat-card.accent-amber::after   { background: linear-gradient(90deg, var(--amber-dim), var(--amber)); }
+    .stat-card.accent-green::after   { background: linear-gradient(90deg, var(--green-dim), var(--green)); }
+    .stat-card.accent-red::after     { background: linear-gradient(90deg, var(--red-dim), var(--red)); }
+
+    .stat-card-label {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--outline); margin-bottom: 8px;
+    }
+    .stat-card-value {
+      font-size: 32px; font-weight: 800; letter-spacing: -0.03em;
+      color: var(--on-surface); line-height: 1;
+    }
+    .stat-card-delta {
+      font-size: 11px; font-weight: 500; margin-top: 6px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .stat-card-delta.up { color: var(--green); }
+    .stat-card-delta.down { color: var(--red); }
+    .stat-card-delta .material-symbols-outlined { font-size: 14px; }
+
+    /* ===================================================================
+       FILTER / SEARCH BAR
+       =================================================================== */
+    .filter-bar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+
+    .search-wrapper {
+      position: relative; flex: 1; min-width: 240px;
+    }
+
+    .search-wrapper .material-symbols-outlined {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px; color: var(--outline);
+      pointer-events: none;
+      transition: color var(--transition-fast);
+    }
+
+    .search-input {
+      width: 100%; padding: 11px 16px 11px 44px;
+      font-size: 14px; font-weight: 400;
+      color: var(--on-surface);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid var(--outline-variant);
+      border-radius: var(--radius-md);
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast);
+    }
+
+    .search-input::placeholder { color: var(--outline); }
+
+    .search-input:focus {
+      border-color: var(--steel-blue);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow:
+        0 0 0 3px rgba(74, 140, 199, 0.12),
+        0 0 20px rgba(74, 140, 199, 0.08);
+    }
+
+    .search-input:focus ~ .material-symbols-outlined {
+      color: var(--steel-blue-bright);
+    }
+
+    .filter-select {
+      padding: 10px 14px; font-size: 13px; font-weight: 500;
+      color: var(--on-surface-variant);
+      background: var(--bg-surface-mid);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+      -webkit-appearance: none; appearance: none;
+      padding-right: 32px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238c9199' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    .filter-select:focus {
+      border-color: var(--steel-blue);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 140, 199, 0.1);
+    }
+
+    /* ===================================================================
+       COMPLAINTS TABLE
+       =================================================================== */
+    .table-container {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      opacity: 0; transform: translateY(18px);
+      animation: revealUp 0.6s 0.3s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .complaints-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .complaints-table thead {
+      background: var(--bg-deep);
+      border-bottom: 1px solid var(--white-8);
+    }
+
+    .complaints-table thead th {
+      font-family: var(--font-mono);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--outline);
+      padding: 14px 16px;
+      text-align: left;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .complaints-table thead th.sortable {
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+    .complaints-table thead th.sortable:hover { color: var(--on-surface-variant); }
+
+    .complaints-table tbody tr {
+      border-bottom: 1px solid var(--white-3);
+      transition:
+        background var(--transition-fast),
+        box-shadow var(--transition-fast);
+      cursor: pointer;
+    }
+
+    /* Hover row highlight — 5% lighter */
+    .complaints-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .complaints-table tbody td {
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--on-surface);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    /* Complaint ID */
+    .complaint-id {
+      font-family: var(--font-mono);
+      font-size: 12px; font-weight: 500;
+      color: var(--steel-blue-bright);
+      letter-spacing: 0.02em;
+    }
+
+    /* Category icon + text */
+    .complaint-category {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .complaint-category .cat-icon {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .cat-icon.water   { background: rgba(74,140,199,0.12); color: var(--steel-blue-bright); }
+    .cat-icon.roads   { background: rgba(94,217,215,0.12); color: var(--teal); }
+    .cat-icon.power   { background: rgba(255,180,171,0.10); color: var(--error); }
+    .cat-icon.waste   { background: rgba(159,202,253,0.10); color: var(--primary); }
+    .cat-icon.traffic { background: rgba(94,217,215,0.10);  color: var(--teal-dim); }
+    .cat-icon.parks   { background: rgba(100,200,130,0.10); color: #7dd99e; }
+    .cat-icon.general { background: rgba(140,145,153,0.10); color: var(--outline); }
+
+    .complaint-title-cell {
+      max-width: 280px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .complaint-location {
+      font-size: 12px; color: var(--on-surface-variant);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .complaint-location .material-symbols-outlined { font-size: 14px; color: var(--outline); }
+
+    .complaint-date {
+      font-family: var(--font-mono);
+      font-size: 11px; color: var(--outline);
+      letter-spacing: 0.02em;
+    }
+
+    /* Status Badges — animated fade in */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 9px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 12px;
+      opacity: 0;
+      animation: badgeFadeIn 0.5s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    /* Stagger badge animations per row */
+    tr:nth-child(1) .status-badge { animation-delay: 0.40s; }
+    tr:nth-child(2) .status-badge { animation-delay: 0.48s; }
+    tr:nth-child(3) .status-badge { animation-delay: 0.56s; }
+    tr:nth-child(4) .status-badge { animation-delay: 0.64s; }
+    tr:nth-child(5) .status-badge { animation-delay: 0.72s; }
+    tr:nth-child(6) .status-badge { animation-delay: 0.80s; }
+    tr:nth-child(7) .status-badge { animation-delay: 0.88s; }
+    tr:nth-child(8) .status-badge { animation-delay: 0.96s; }
+    tr:nth-child(9) .status-badge { animation-delay: 1.04s; }
+    tr:nth-child(10) .status-badge { animation-delay: 1.12s; }
+
+    @keyframes badgeFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-badge .dot {
+      width: 5px; height: 5px; border-radius: 50%;
+    }
+
+    .status-badge.open       { color: var(--amber);             background: rgba(245,197,66,0.10); }
+    .status-badge.open .dot  { background: var(--amber); }
+
+    .status-badge.in-progress       { color: var(--steel-blue-bright); background: rgba(74,140,199,0.10); }
+    .status-badge.in-progress .dot  { background: var(--steel-blue-bright); animation: pulseDot 2s ease-in-out infinite; }
+
+    .status-badge.resolved       { color: var(--green);           background: rgba(102,217,160,0.10); }
+    .status-badge.resolved .dot  { background: var(--green); }
+
+    .status-badge.escalated       { color: var(--red);             background: rgba(255,107,107,0.10); }
+    .status-badge.escalated .dot  { background: var(--red); animation: pulseDot 1.5s ease-in-out infinite; }
+
+    .status-badge.closed       { color: var(--outline);          background: rgba(140,145,153,0.08); }
+    .status-badge.closed .dot  { background: var(--outline); }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* Priority */
+    .priority-indicator {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .priority-indicator .bar {
+      width: 3px; height: 18px; border-radius: 2px;
+    }
+    .priority-indicator.critical .bar  { background: var(--red); }
+    .priority-indicator.critical       { color: var(--red); }
+    .priority-indicator.high .bar      { background: var(--amber); }
+    .priority-indicator.high           { color: var(--amber); }
+    .priority-indicator.medium .bar    { background: var(--steel-blue-bright); }
+    .priority-indicator.medium         { color: var(--steel-blue-bright); }
+    .priority-indicator.low .bar       { background: var(--outline); }
+    .priority-indicator.low            { color: var(--outline); }
+
+    /* Generate Work Order Button — slide in from right on hover */
+    .work-order-cell {
+      position: relative;
+      overflow: hidden;
+      min-width: 160px;
+    }
+
+    .btn-work-order {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; font-size: 11px; font-weight: 600;
+      color: var(--teal); background: transparent;
+      border: 1px solid var(--teal-dim);
+      border-radius: var(--radius-sm);
+      transform: translateX(120%);
+      opacity: 0;
+      transition: all var(--transition-base);
+      white-space: nowrap;
+    }
+    .btn-work-order .material-symbols-outlined { font-size: 14px; }
+
+    tr:hover .btn-work-order {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .btn-work-order:hover {
+      background: rgba(94, 217, 215, 0.10);
+      border-color: var(--teal);
+    }
+
+    /* ===================================================================
+       PAGINATION
+       =================================================================== */
+    .pagination-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 20px; padding: 0 4px;
+      flex-wrap: wrap; gap: 16px;
+    }
+
+    .pagination-info {
+      font-family: var(--font-mono);
+      font-size: 11px; color: var(--outline);
+      letter-spacing: 0.04em;
+    }
+
+    .pagination-controls {
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    .page-btn {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 500;
+      color: var(--on-surface-variant);
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all var(--transition-fast);
+    }
+    .page-btn:hover {
+      background: var(--white-5);
+      border-color: var(--outline-variant);
+      color: var(--on-surface);
+    }
+    .page-btn.active {
+      background: var(--steel-blue);
+      color: #fff;
+      border-color: var(--steel-blue);
+      box-shadow: 0 2px 10px rgba(74, 140, 199, 0.25);
+    }
+    .page-btn.nav-arrow {
+      color: var(--outline);
+    }
+    .page-btn.nav-arrow:hover { color: var(--on-surface); }
+    .page-btn.nav-arrow .material-symbols-outlined { font-size: 18px; }
+    .page-btn.disabled {
+      opacity: 0.3; pointer-events: none;
+    }
+
+    /* ===================================================================
+       SECTION DIVIDER
+       =================================================================== */
+    .section-divider {
+      height: 1px;
+      background: var(--white-5);
+      margin: 24px 0;
+    }
+
+    /* ===================================================================
+       RESPONSIVE
+       =================================================================== */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-panel { left: 0 !important; padding: 20px 16px 40px; }
+      .nav-center { display: none; }
+      .panel-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .table-container { overflow-x: auto; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ===================================================================
+       SCROLLBAR
+       =================================================================== */
+    .main-panel::-webkit-scrollbar { width: 6px; }
+    .main-panel::-webkit-scrollbar-track { background: transparent; }
+    .main-panel::-webkit-scrollbar-thumb {
+      background: var(--outline-variant); border-radius: 3px;
+    }
+    .main-panel::-webkit-scrollbar-thumb:hover { background: var(--outline); }
+  </style>
+</head>
+<body>
+
+  <!-- ================================================================
+       TOP NAVIGATION
+       ================================================================ -->
+  <nav class="top-nav" id="topNav">
+    <div class="nav-left">
+      <div class="nav-emblem">U</div>
+      <div class="nav-title">Urban Ops Authority</div>
+    </div>
+    <div class="nav-center">
+      <a href="index.html" class="nav-tab">Home</a>
+      <a href="dashboard.html" class="nav-tab">Dashboard</a>
+      <a href="complaints.html" class="nav-tab active">Complaints</a>
+      <a href="workorders.html" class="nav-tab">Work Orders</a>
+      <a href="analytics.html" class="nav-tab">Analytics</a>
+      <a href="audit.html" class="nav-tab">Audit Logs</a>
+      <a href="login.html" class="nav-tab">Login</a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" aria-label="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="badge"></span>
+      </button>
+      <button class="nav-icon-btn" aria-label="Search">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <div class="nav-avatar">AK</div>
+    </div>
+  </nav>
+
+  <!-- ================================================================
+       SIDEBAR
+       ================================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle">
+      <button id="sidebarToggle" aria-label="Toggle sidebar">
+        <span class="material-symbols-outlined">menu_open</span>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-item">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="label">Overview</span>
+      </a>
+      <a href="complaints.html" class="sidebar-item active">
+        <span class="material-symbols-outlined">feedback</span>
+        <span class="label">Complaints</span>
+      </a>
+      <a href="workorders.html" class="sidebar-item">
+        <span class="material-symbols-outlined">assignment</span>
+        <span class="label">Work Orders</span>
+      </a>
+      <a href="analytics.html" class="sidebar-item">
+        <span class="material-symbols-outlined">query_stats</span>
+        <span class="label">Analytics</span>
+      </a>
+      <a href="audit.html" class="sidebar-item">
+        <span class="material-symbols-outlined">shield</span>
+        <span class="label">Audit Logs</span>
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="material-symbols-outlined">settings</span>
+        <span class="label">Settings</span>
+      </a>
+      <div style="flex:1;"></div>
+      <a href="login.html" class="sidebar-item" style="margin-top:auto;">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="label">Logout</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-text">System v4.2.1 · Karnataka GOV</div>
+    </div>
+  </aside>
+
+  <!-- ================================================================
+       MAIN PANEL
+       ================================================================ -->
+  <main class="main-panel" id="mainPanel">
+
+    <!-- Panel Header -->
+    <div class="panel-header">
+      <div>
+        <h1>Complaint Management</h1>
+        <p style="font-size:13px; color: var(--outline); margin-top: 4px;">Civic infrastructure complaints · Bengaluru Metropolitan Region</p>
+      </div>
+      <div class="panel-header-right">
+        <div class="header-badge info">
+          <span class="material-symbols-outlined" style="font-size:14px;">schedule</span>
+          Last synced 2m ago
+        </div>
+        <button class="btn-new-complaint" id="btnNewComplaint">
+          <span class="material-symbols-outlined">add</span>
+          New Complaint
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-card glass-frost accent-blue">
+        <div class="stat-card-label">Total Complaints</div>
+        <div class="stat-card-value" data-count="2847">0</div>
+        <div class="stat-card-delta up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +128 this week
+        </div>
+      </div>
+      <div class="stat-card glass-frost accent-amber">
+        <div class="stat-card-label">Pending Review</div>
+        <div class="stat-card-value" data-count="342">0</div>
+        <div class="stat-card-delta down">
+          <span class="material-symbols-outlined">trending_up</span>
+          +18 since yesterday
+        </div>
+      </div>
+      <div class="stat-card glass-frost accent-green">
+        <div class="stat-card-label">Resolved (30d)</div>
+        <div class="stat-card-value" data-count="1956">0</div>
+        <div class="stat-card-delta up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +12% resolution rate
+        </div>
+      </div>
+      <div class="stat-card glass-frost accent-red">
+        <div class="stat-card-label">Escalated</div>
+        <div class="stat-card-value" data-count="23">0</div>
+        <div class="stat-card-delta down">
+          <span class="material-symbols-outlined">trending_down</span>
+          -5 from last week
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Filter / Search Bar -->
+    <div class="filter-bar">
+      <div class="search-wrapper">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search complaints by ID, title, location, or ward..." />
+        <span class="material-symbols-outlined">search</span>
+      </div>
+      <select class="filter-select" id="filterStatus">
+        <option value="all">All Status</option>
+        <option value="open">Open</option>
+        <option value="in-progress">In Progress</option>
+        <option value="resolved">Resolved</option>
+        <option value="escalated">Escalated</option>
+        <option value="closed">Closed</option>
+      </select>
+      <select class="filter-select" id="filterCategory">
+        <option value="all">All Categories</option>
+        <option value="water">Water Issues</option>
+        <option value="roads">Road Defects</option>
+        <option value="power">Electrical Faults</option>
+        <option value="waste">Drainage Blockages</option>
+        <option value="traffic">Traffic & Transit</option>
+        <option value="parks">Parks & Public Spaces</option>
+      </select>
+      <select class="filter-select" id="filterPriority">
+        <option value="all">All Priority</option>
+        <option value="critical">Critical</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+    </div>
+
+    <!-- Complaints Table -->
+    <div class="table-container glass-frost" id="tableContainer">
+      <table class="complaints-table" id="complaintsTable">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort="id">Complaint ID</th>
+            <th>Category</th>
+            <th class="sortable" data-sort="title">Description</th>
+            <th>Location</th>
+            <th class="sortable" data-sort="date">Filed On</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="complaintsBody">
+          <!-- Row 1 -->
+          <tr data-status="escalated" data-category="water" data-priority="critical">
+            <td><span class="complaint-id">CMP-2026-4281</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon water"><span class="material-symbols-outlined">water_drop</span></div>
+                Water Issues
+              </div>
+            </td>
+            <td class="complaint-title-cell">Severe pipeline burst flooding residential lane</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Jayanagar 4th Block, Ward 38
+              </div>
+            </td>
+            <td><span class="complaint-date">09 Jun 2026 · 14:22</span></td>
+            <td><div class="priority-indicator critical"><div class="bar"></div>Critical</div></td>
+            <td><span class="status-badge escalated"><span class="dot"></span>Escalated</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 2 -->
+          <tr data-status="in-progress" data-category="roads" data-priority="high">
+            <td><span class="complaint-id">CMP-2026-4280</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon roads"><span class="material-symbols-outlined">road</span></div>
+                Road Defects
+              </div>
+            </td>
+            <td class="complaint-title-cell">Deep pothole cluster on main arterial road</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Outer Ring Rd, Marathahalli
+              </div>
+            </td>
+            <td><span class="complaint-date">09 Jun 2026 · 11:45</span></td>
+            <td><div class="priority-indicator high"><div class="bar"></div>High</div></td>
+            <td><span class="status-badge in-progress"><span class="dot"></span>In Progress</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 3 -->
+          <tr data-status="open" data-category="power" data-priority="high">
+            <td><span class="complaint-id">CMP-2026-4279</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon power"><span class="material-symbols-outlined">bolt</span></div>
+                Electrical Faults
+              </div>
+            </td>
+            <td class="complaint-title-cell">Intermittent power outages across 3 blocks</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Koramangala 5th Block
+              </div>
+            </td>
+            <td><span class="complaint-date">09 Jun 2026 · 09:18</span></td>
+            <td><div class="priority-indicator high"><div class="bar"></div>High</div></td>
+            <td><span class="status-badge open"><span class="dot"></span>Open</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 4 -->
+          <tr data-status="in-progress" data-category="waste" data-priority="medium">
+            <td><span class="complaint-id">CMP-2026-4278</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon waste"><span class="material-symbols-outlined">delete</span></div>
+                Drainage Blockages
+              </div>
+            </td>
+            <td class="complaint-title-cell">Overflowing garbage bins at commercial zone</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Brigade Rd, Ward 15
+              </div>
+            </td>
+            <td><span class="complaint-date">08 Jun 2026 · 16:30</span></td>
+            <td><div class="priority-indicator medium"><div class="bar"></div>Medium</div></td>
+            <td><span class="status-badge in-progress"><span class="dot"></span>In Progress</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 5 -->
+          <tr data-status="resolved" data-category="traffic" data-priority="medium">
+            <td><span class="complaint-id">CMP-2026-4277</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon traffic"><span class="material-symbols-outlined">traffic</span></div>
+                Road Defects
+              </div>
+            </td>
+            <td class="complaint-title-cell">Non-functional signal causing gridlock at junction</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Silk Board Junction
+              </div>
+            </td>
+            <td><span class="complaint-date">08 Jun 2026 · 12:55</span></td>
+            <td><div class="priority-indicator medium"><div class="bar"></div>Medium</div></td>
+            <td><span class="status-badge resolved"><span class="dot"></span>Resolved</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 6 -->
+          <tr data-status="open" data-category="parks" data-priority="low">
+            <td><span class="complaint-id">CMP-2026-4276</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon parks"><span class="material-symbols-outlined">park</span></div>
+                Parks & Public Spaces
+              </div>
+            </td>
+            <td class="complaint-title-cell">Broken bench and vandalized signage at park entrance</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Cubbon Park, Ward 08
+              </div>
+            </td>
+            <td><span class="complaint-date">08 Jun 2026 · 10:12</span></td>
+            <td><div class="priority-indicator low"><div class="bar"></div>Low</div></td>
+            <td><span class="status-badge open"><span class="dot"></span>Open</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 7 -->
+          <tr data-status="resolved" data-category="water" data-priority="medium">
+            <td><span class="complaint-id">CMP-2026-4275</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon water"><span class="material-symbols-outlined">water_drop</span></div>
+                Water Issues
+              </div>
+            </td>
+            <td class="complaint-title-cell">Low water pressure in residential complex</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                HSR Layout Sector 2
+              </div>
+            </td>
+            <td><span class="complaint-date">07 Jun 2026 · 18:40</span></td>
+            <td><div class="priority-indicator medium"><div class="bar"></div>Medium</div></td>
+            <td><span class="status-badge resolved"><span class="dot"></span>Resolved</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 8 -->
+          <tr data-status="closed" data-category="roads" data-priority="low">
+            <td><span class="complaint-id">CMP-2026-4274</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon roads"><span class="material-symbols-outlined">road</span></div>
+                Road Defects
+              </div>
+            </td>
+            <td class="complaint-title-cell">Faded lane markings on school zone road</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Basavanagudi, Ward 31
+              </div>
+            </td>
+            <td><span class="complaint-date">07 Jun 2026 · 14:10</span></td>
+            <td><div class="priority-indicator low"><div class="bar"></div>Low</div></td>
+            <td><span class="status-badge closed"><span class="dot"></span>Closed</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 9 -->
+          <tr data-status="escalated" data-category="power" data-priority="critical">
+            <td><span class="complaint-id">CMP-2026-4273</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon power"><span class="material-symbols-outlined">bolt</span></div>
+                Electrical Faults
+              </div>
+            </td>
+            <td class="complaint-title-cell">Transformer overheating — sparking observed</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Electronic City Phase 1
+              </div>
+            </td>
+            <td><span class="complaint-date">07 Jun 2026 · 08:55</span></td>
+            <td><div class="priority-indicator critical"><div class="bar"></div>Critical</div></td>
+            <td><span class="status-badge escalated"><span class="dot"></span>Escalated</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+          <!-- Row 10 -->
+          <tr data-status="in-progress" data-category="waste" data-priority="medium">
+            <td><span class="complaint-id">CMP-2026-4272</span></td>
+            <td>
+              <div class="complaint-category">
+                <div class="cat-icon waste"><span class="material-symbols-outlined">delete</span></div>
+                Drainage Blockages
+              </div>
+            </td>
+            <td class="complaint-title-cell">Missed collection schedule for 3 consecutive days</td>
+            <td>
+              <div class="complaint-location">
+                <span class="material-symbols-outlined">location_on</span>
+                Whitefield, Ward 22
+              </div>
+            </td>
+            <td><span class="complaint-date">06 Jun 2026 · 17:20</span></td>
+            <td><div class="priority-indicator medium"><div class="bar"></div>Medium</div></td>
+            <td><span class="status-badge in-progress"><span class="dot"></span>In Progress</span></td>
+            <td class="work-order-cell">
+              <button class="btn-work-order" aria-label="Generate Work Order">
+                <span class="material-symbols-outlined">assignment</span>
+                Work Order
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" id="paginationBar">
+      <div class="pagination-info">Showing 1–10 of 2,847 complaints</div>
+      <div class="pagination-controls">
+        <button class="page-btn nav-arrow disabled" id="pagePrev" aria-label="Previous page">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <button class="page-btn active" data-page="1">1</button>
+        <button class="page-btn" data-page="2">2</button>
+        <button class="page-btn" data-page="3">3</button>
+        <button class="page-btn" data-page="4">4</button>
+        <button class="page-btn" data-page="5">5</button>
+        <span style="color: var(--outline); font-size: 13px; padding: 0 4px;">…</span>
+        <button class="page-btn" data-page="285">285</button>
+        <button class="page-btn nav-arrow" id="pageNext" aria-label="Next page">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================================================================
+       SCRIPTS
+       ================================================================ -->
+  <script>
+    // =================================================================
+    // SIDEBAR COLLAPSE TOGGLE
+    // =================================================================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      const icon = sidebarToggle.querySelector('.material-symbols-outlined');
+      icon.textContent = sidebar.classList.contains('collapsed') ? 'menu' : 'menu_open';
+    });
+
+    // =================================================================
+    // KPI COUNT-UP ANIMATION
+    // =================================================================
+    function animateCount(el, target, duration = 1600) {
+      const startTime = performance.now();
+      function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target).toLocaleString();
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // Trigger count-up after card animations settle
+    setTimeout(() => {
+      document.querySelectorAll('.stat-card-value[data-count]').forEach(el => {
+        animateCount(el, parseInt(el.dataset.count));
+      });
+    }, 350);
+
+    // =================================================================
+    // SEARCH FILTER (live client-side)
+    // =================================================================
+    const searchInput = document.getElementById('searchInput');
+    const filterStatus = document.getElementById('filterStatus');
+    const filterCategory = document.getElementById('filterCategory');
+    const filterPriority = document.getElementById('filterPriority');
+    const tbody = document.getElementById('complaintsBody');
+
+    function applyFilters() {
+      const query = searchInput.value.toLowerCase().trim();
+      const status = filterStatus.value;
+      const category = filterCategory.value;
+      const priority = filterPriority.value;
+
+      const rows = tbody.querySelectorAll('tr');
+      let visible = 0;
+
+      rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        const rowStatus = row.dataset.status;
+        const rowCategory = row.dataset.category;
+        const rowPriority = row.dataset.priority;
+
+        const matchQuery = !query || rowText.includes(query);
+        const matchStatus = status === 'all' || rowStatus === status;
+        const matchCategory = category === 'all' || rowCategory === category;
+        const matchPriority = priority === 'all' || rowPriority === priority;
+
+        if (matchQuery && matchStatus && matchCategory && matchPriority) {
+          row.style.display = '';
+          visible++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update pagination info
+      const info = document.querySelector('.pagination-info');
+      if (info) {
+        info.textContent = visible === rows.length
+          ? `Showing 1–${visible} of 2,847 complaints`
+          : `Showing ${visible} of ${rows.length} filtered results`;
+      }
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    filterStatus.addEventListener('change', applyFilters);
+    filterCategory.addEventListener('change', applyFilters);
+    filterPriority.addEventListener('change', applyFilters);
+
+    // =================================================================
+    // PAGINATION (visual only — demo)
+    // =================================================================
+    const pageBtns = document.querySelectorAll('.page-btn[data-page]');
+    const pagePrev = document.getElementById('pagePrev');
+    const pageNext = document.getElementById('pageNext');
+
+    pageBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        pageBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const page = parseInt(btn.dataset.page);
+        pagePrev.classList.toggle('disabled', page === 1);
+        pageNext.classList.toggle('disabled', page === 285);
+      });
+    });
+
+    pagePrev.addEventListener('click', () => {
+      const active = document.querySelector('.page-btn.active[data-page]');
+      if (!active) return;
+      const prev = active.previousElementSibling;
+      if (prev && prev.dataset.page) prev.click();
+    });
+
+    pageNext.addEventListener('click', () => {
+      const active = document.querySelector('.page-btn.active[data-page]');
+      if (!active) return;
+      const next = active.nextElementSibling;
+      if (next && next.dataset.page) next.click();
+    });
+
+    // =================================================================
+    // KEYBOARD SHORTCUT — focus search with /
+    // =================================================================
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Urban Operations Authority — Government of Karnataka</title>
+  <meta name="description" content="Infrastructure Overview Dashboard — Urban Operations Authority, Government of Karnataka." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <style>
+    /* ===================================================================
+       DESIGN TOKENS
+       =================================================================== */
+    :root {
+      --bg-deep:            #030e1c;
+      --bg-base:            #051424;
+      --bg-surface:         #0d1c2d;
+      --bg-surface-mid:     #122131;
+      --bg-surface-high:    #1c2b3c;
+      --bg-surface-highest: #273647;
+      --bg-sidebar:         #040c18;
+
+      --steel-blue:         #4a8cc7;
+      --steel-blue-bright:  #6eaadf;
+      --steel-blue-dim:     #2f5d8a;
+      --primary:            #9fcafd;
+      --primary-container:  #2f5d8a;
+
+      --teal:               #5ed9d7;
+      --teal-bright:        #7df0ee;
+      --teal-dim:           #3db5b3;
+      --teal-deep:          #00504f;
+
+      --green:              #66d9a0;
+      --green-dim:          #2a7a50;
+      --red:                #ff6b6b;
+      --red-dim:            #93000a;
+      --amber:              #f5c542;
+      --amber-dim:          #8a6d00;
+
+      --on-surface:         #d4e4fa;
+      --on-surface-variant: #a0afc4;
+      --outline:            #8c9199;
+      --outline-variant:    #42474f;
+
+      --error:              #ffb4ab;
+      --white-3:            rgba(255,255,255,0.03);
+      --white-5:            rgba(255,255,255,0.05);
+      --white-8:            rgba(255,255,255,0.08);
+      --white-12:           rgba(255,255,255,0.12);
+
+      --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --transition-fast: 180ms cubic-bezier(.4,0,.2,1);
+      --transition-base: 300ms cubic-bezier(.4,0,.2,1);
+      --transition-slow: 500ms cubic-bezier(.4,0,.2,1);
+
+      --sidebar-width: 240px;
+      --sidebar-collapsed: 64px;
+      --topnav-height: 56px;
+    }
+
+    /* ===================================================================
+       RESET
+       =================================================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; height: 100%; }
+    body {
+      font-family: var(--font-primary);
+      background: var(--bg-base);
+      color: var(--on-surface);
+      height: 100%;
+      overflow: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; }
+    ul { list-style: none; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    /* ===================================================================
+       GLASS SURFACE
+       =================================================================== */
+    .glass {
+      background: rgba(30, 43, 60, 0.40);
+      backdrop-filter: blur(14px) saturate(1.3);
+      -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      border: 1px solid var(--white-8);
+    }
+
+    .glass-frost {
+      background: rgba(22, 36, 54, 0.55);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border: 1px solid var(--white-5);
+    }
+
+    /* ===================================================================
+       TOP NAVIGATION (CardNav)
+       =================================================================== */
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--topnav-height);
+      z-index: 200;
+      background: rgba(4, 12, 24, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--white-5);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 200px;
+    }
+
+    .nav-emblem {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--steel-blue), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: var(--bg-deep);
+    }
+
+    .nav-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--on-surface);
+    }
+
+    .nav-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-tab:hover { color: var(--on-surface); opacity: 0.8; }
+
+    .nav-tab.active {
+      color: var(--primary);
+      background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 200px;
+      justify-content: flex-end;
+    }
+
+    .nav-icon-btn {
+      position: relative;
+      color: var(--on-surface-variant);
+      font-size: 20px;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .nav-icon-btn:hover {
+      color: var(--on-surface);
+      background: var(--white-5);
+    }
+
+    .nav-icon-btn .badge {
+      position: absolute;
+      top: 2px; right: 2px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      border: 2px solid var(--bg-sidebar);
+    }
+
+    .system-live {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+
+    .system-live .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: livePulse 2.4s ease-in-out infinite;
+      box-shadow: 0 0 6px rgba(102, 217, 160, 0.5);
+    }
+
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .nav-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--bg-surface-high);
+      border: 1.5px solid var(--outline-variant);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+    }
+    .nav-avatar:hover { border-color: var(--primary); }
+
+    /* ===================================================================
+       SIDEBAR
+       =================================================================== */
+    .sidebar {
+      position: fixed;
+      top: var(--topnav-height);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--white-5);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transition: width var(--transition-base);
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: var(--sidebar-collapsed);
+    }
+
+    .sidebar-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--white-5);
+    }
+
+    .sidebar-toggle button {
+      color: var(--outline);
+      font-size: 20px;
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .sidebar-toggle button:hover {
+      color: var(--on-surface);
+      background: var(--white-5);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 10px;
+      overflow-y: auto;
+    }
+
+    .sidebar-section-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--outline-variant);
+      padding: 16px 10px 8px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed .sidebar-section-label {
+      opacity: 0;
+      height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+
+    .sidebar-item:hover {
+      color: var(--on-surface);
+      background: var(--white-3);
+      opacity: 0.85;
+    }
+
+    .sidebar-item.active {
+      color: var(--primary);
+      background: rgba(30, 43, 60, 0.5);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--white-8);
+    }
+
+    .sidebar-item .material-symbols-outlined {
+      font-size: 20px;
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    .sidebar-item .label {
+      transition: opacity var(--transition-fast);
+    }
+
+    .sidebar.collapsed .sidebar-item .label {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed .sidebar-item {
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .sidebar-footer {
+      padding: 12px 14px;
+      border-top: 1px solid var(--white-5);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .sidebar-footer-text {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--outline-variant);
+      letter-spacing: 0.06em;
+    }
+
+    .sidebar.collapsed .sidebar-footer-text { opacity: 0; }
+
+    /* ===================================================================
+       MAIN PANEL
+       =================================================================== */
+    .main-panel {
+      position: fixed;
+      top: var(--topnav-height);
+      left: var(--sidebar-width);
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg-base);
+      transition: left var(--transition-base);
+      padding: 28px 32px 48px;
+    }
+
+    .sidebar.collapsed ~ .main-panel {
+      left: var(--sidebar-collapsed);
+    }
+
+    /* Panel Header */
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .panel-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-live-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(102, 217, 160, 0.08);
+      border: 1px solid rgba(102, 217, 160, 0.15);
+    }
+
+    .header-live-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: livePulse 2.4s ease-in-out infinite;
+    }
+
+    .header-live-badge span {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+
+    .header-notification {
+      position: relative;
+      color: var(--on-surface-variant);
+      font-size: 22px;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+    .header-notification:hover {
+      color: var(--on-surface);
+      background: var(--white-5);
+    }
+    .header-notification .notif-badge {
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    /* Section Divider */
+    .section-divider {
+      height: 1px;
+      background: var(--white-5);
+      margin: 28px 0;
+    }
+
+    /* ===================================================================
+       KPI CARDS
+       =================================================================== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 700px)  { .kpi-grid { grid-template-columns: 1fr; } }
+
+    .kpi-card {
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: revealUp 0.55s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .kpi-card:nth-child(1) { animation-delay: 0.08s; }
+    .kpi-card:nth-child(2) { animation-delay: 0.16s; }
+    .kpi-card:nth-child(3) { animation-delay: 0.24s; }
+    .kpi-card:nth-child(4) { animation-delay: 0.32s; }
+
+    @keyframes revealUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .kpi-card.accent-blue::after    { background: linear-gradient(90deg, var(--steel-blue), var(--steel-blue-bright)); }
+    .kpi-card.accent-teal::after    { background: linear-gradient(90deg, var(--teal-dim), var(--teal)); }
+    .kpi-card.accent-green::after   { background: linear-gradient(90deg, var(--green-dim), var(--green)); }
+    .kpi-card.accent-amber::after   { background: linear-gradient(90deg, var(--amber-dim), var(--amber)); }
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .kpi-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--outline);
+    }
+
+    .kpi-icon {
+      font-size: 20px;
+      color: var(--on-surface-variant);
+      opacity: 0.5;
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--on-surface);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .kpi-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .kpi-trend.up {
+      color: var(--green);
+      background: rgba(102, 217, 160, 0.1);
+    }
+
+    .kpi-trend.down {
+      color: var(--red);
+      background: rgba(255, 107, 107, 0.1);
+    }
+
+    .kpi-trend .material-symbols-outlined { font-size: 14px; }
+
+    /* ===================================================================
+       CHART PANELS
+       =================================================================== */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 18px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 1000px) { .charts-grid { grid-template-columns: 1fr; } }
+
+    .chart-panel {
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      min-height: 320px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.6s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .chart-panel:nth-child(1) { animation-delay: 0.4s; }
+    .chart-panel:nth-child(2) { animation-delay: 0.5s; }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    .chart-subtitle {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--outline);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .chart-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chart-action-btn {
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--outline);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--outline-variant);
+      transition: all var(--transition-fast);
+    }
+
+    .chart-action-btn:hover { color: var(--on-surface); border-color: var(--on-surface-variant); }
+    .chart-action-btn.active { color: var(--primary); border-color: var(--primary); background: rgba(159,202,253,0.06); }
+
+    /* SVG Chart Area */
+    .chart-area {
+      width: 100%;
+      height: 220px;
+      position: relative;
+    }
+
+    .chart-area svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Tooltip */
+    .chart-tooltip {
+      position: absolute;
+      padding: 8px 14px;
+      background: var(--bg-surface-highest);
+      border: 1px solid var(--white-12);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--on-surface);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      z-index: 50;
+      white-space: nowrap;
+    }
+
+    .chart-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chart-tooltip-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--outline);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    /* Donut Chart */
+    .donut-container {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 220px;
+    }
+
+    .donut-svg {
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+
+    .donut-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .donut-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--on-surface-variant);
+    }
+
+    .donut-legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .donut-legend-value {
+      font-weight: 600;
+      color: var(--on-surface);
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    /* ===================================================================
+       LIVE MAP
+       =================================================================== */
+    .map-section {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.6s 0.6s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .map-container {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      height: 380px;
+    }
+
+    .map-canvas {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-deep);
+      position: relative;
+    }
+
+    /* Grid pattern for map background */
+    .map-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--white-3) 1px, transparent 1px),
+        linear-gradient(90deg, var(--white-3) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Map roads */
+    .map-roads {
+      position: absolute;
+      inset: 0;
+    }
+
+    .map-road {
+      position: absolute;
+      background: rgba(66, 71, 79, 0.4);
+      border-radius: 1px;
+    }
+
+    /* Map markers */
+    .map-marker {
+      position: absolute;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+      z-index: 10;
+    }
+
+    .map-marker:hover { transform: translate(-50%, -50%) scale(1.4); }
+
+    .map-marker::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      animation: markerRipple 2.5s ease-out infinite;
+    }
+
+    .map-marker.active {
+      background: var(--teal);
+      box-shadow: 0 0 10px rgba(94, 217, 215, 0.5);
+    }
+    .map-marker.active::after { border: 1.5px solid rgba(94, 217, 215, 0.3); }
+
+    .map-marker.breach {
+      background: var(--red);
+      box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    }
+    .map-marker.breach::after { border: 1.5px solid rgba(255, 107, 107, 0.3); }
+
+    .map-marker.resolved {
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(102, 217, 160, 0.4);
+    }
+    .map-marker.resolved::after { border: 1.5px solid rgba(102, 217, 160, 0.25); }
+
+    @keyframes markerRipple {
+      0%   { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .map-marker-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 12px;
+      background: var(--bg-surface-highest);
+      border: 1px solid var(--white-12);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--on-surface);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .map-marker:hover .map-marker-tooltip { opacity: 1; }
+
+    /* Map controls */
+    .map-controls {
+      position: absolute;
+      bottom: 16px; right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 20;
+    }
+
+    .map-ctrl-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-surface-high);
+      border: 1px solid var(--outline-variant);
+      color: var(--on-surface-variant);
+      font-size: 18px;
+      transition: all var(--transition-fast);
+    }
+
+    .map-ctrl-btn:first-child { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+    .map-ctrl-btn:last-child  { border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
+
+    .map-ctrl-btn:hover {
+      background: var(--bg-surface-highest);
+      color: var(--on-surface);
+    }
+
+    /* Map legend */
+    .map-legend {
+      position: absolute;
+      bottom: 16px; left: 16px;
+      display: flex;
+      gap: 16px;
+      padding: 8px 16px;
+      background: rgba(4, 12, 24, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--white-5);
+      border-radius: var(--radius-sm);
+      z-index: 20;
+    }
+
+    .map-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    .map-legend-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+
+    /* Map header */
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    /* ===================================================================
+       INCIDENT LOG TABLE
+       =================================================================== */
+    .incident-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 1000px) { .incident-grid { grid-template-columns: 1fr; } }
+
+    .incident-panel {
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.6s 0.7s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .incident-panel:nth-child(2) { animation-delay: 0.8s; }
+
+    .incident-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .incident-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid transparent;
+      transition: background var(--transition-fast);
+    }
+
+    .incident-row:hover { background: var(--white-3); }
+
+    .incident-row.critical  { border-left-color: var(--red); }
+    .incident-row.warning   { border-left-color: var(--amber); }
+    .incident-row.resolved  { border-left-color: var(--green); opacity: 0.6; }
+
+    .incident-info { flex: 1; }
+
+    .incident-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--on-surface);
+      margin-bottom: 2px;
+    }
+
+    .incident-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--outline);
+      letter-spacing: 0.04em;
+    }
+
+    .incident-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    .incident-badge.critical { color: var(--red); background: rgba(255,107,107,0.1); }
+    .incident-badge.warning  { color: var(--amber); background: rgba(245,197,66,0.1); }
+    .incident-badge.ok       { color: var(--green); background: rgba(102,217,160,0.1); }
+
+    /* Quick stats list */
+    .quick-stats { display: flex; flex-direction: column; gap: 14px; }
+
+    .quick-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--white-5);
+    }
+
+    .quick-stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .quick-stat-label {
+      font-size: 13px;
+      color: var(--on-surface-variant);
+    }
+
+    .quick-stat-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    .quick-stat-bar {
+      width: 80px; height: 4px;
+      background: var(--outline-variant);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-left: 12px;
+    }
+
+    .quick-stat-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--steel-blue), var(--teal));
+    }
+
+    /* ===================================================================
+       RESPONSIVE
+       =================================================================== */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-panel { left: 0 !important; padding: 20px 16px 40px; }
+      .nav-center { display: none; }
+      .nav-title { font-size: 13px; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================================================================
+       TOP NAVIGATION (CardNav)
+       ================================================================ -->
+  <nav class="top-nav" id="topNav">
+    <div class="nav-left">
+      <div class="nav-emblem">U</div>
+      <div class="nav-title">Urban Ops Authority</div>
+    </div>
+    <div class="nav-center">
+      <a href="index.html" class="nav-tab">Home</a>
+      <a href="dashboard.html" class="nav-tab active">Dashboard</a>
+      <a href="complaints.html" class="nav-tab">Complaints</a>
+      <a href="workorders.html" class="nav-tab">Work Orders</a>
+      <a href="analytics.html" class="nav-tab">Analytics</a>
+      <a href="audit.html" class="nav-tab">Audit Logs</a>
+      <a href="login.html" class="nav-tab">Login</a>
+    </div>
+    <div class="nav-right">
+      <div class="system-live">
+        <div class="dot"></div>
+        System Live
+      </div>
+      <button class="nav-icon-btn" aria-label="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="badge"></span>
+      </button>
+      <button class="nav-icon-btn" aria-label="Search">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <div class="nav-avatar">AK</div>
+    </div>
+  </nav>
+
+  <!-- ================================================================
+       SIDEBAR
+       ================================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle">
+      <button id="sidebarToggle" aria-label="Toggle sidebar">
+        <span class="material-symbols-outlined">menu_open</span>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-item active">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="label">Overview</span>
+      </a>
+      <a href="complaints.html" class="sidebar-item">
+        <span class="material-symbols-outlined">feedback</span>
+        <span class="label">Complaints</span>
+      </a>
+      <a href="workorders.html" class="sidebar-item">
+        <span class="material-symbols-outlined">assignment</span>
+        <span class="label">Work Orders</span>
+      </a>
+      <a href="analytics.html" class="sidebar-item">
+        <span class="material-symbols-outlined">query_stats</span>
+        <span class="label">Analytics</span>
+      </a>
+      <a href="audit.html" class="sidebar-item">
+        <span class="material-symbols-outlined">shield</span>
+        <span class="label">Audit Logs</span>
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="material-symbols-outlined">settings</span>
+        <span class="label">Settings</span>
+      </a>
+      <div style="flex:1;"></div>
+      <a href="login.html" class="sidebar-item" style="margin-top:auto;">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="label">Logout</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-text">System v4.2.1 · Karnataka GOV</div>
+    </div>
+  </aside>
+
+  <!-- ================================================================
+       MAIN PANEL
+       ================================================================ -->
+  <main class="main-panel" id="mainPanel">
+
+    <!-- Panel Header -->
+    <div class="panel-header">
+      <h1>Operational Overview</h1>
+      <div class="panel-header-right">
+        <div class="header-live-badge">
+          <div class="dot"></div>
+          <span>All Systems Nominal</span>
+        </div>
+        <button class="header-notification" aria-label="Notifications">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="notif-badge"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid" id="kpiGrid">
+      <div class="kpi-card glass-frost accent-blue">
+        <div class="kpi-top">
+          <div class="kpi-label">Total Complaints</div>
+          <span class="material-symbols-outlined kpi-icon">inbox</span>
+        </div>
+        <div class="kpi-value" data-count="2847">0</div>
+        <div class="kpi-trend up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +128 this week
+        </div>
+      </div>
+
+      <div class="kpi-card glass-frost accent-teal">
+        <div class="kpi-top">
+          <div class="kpi-label">In Progress</div>
+          <span class="material-symbols-outlined kpi-icon">pending_actions</span>
+        </div>
+        <div class="kpi-value" data-count="342">0</div>
+        <div class="kpi-trend down">
+          <span class="material-symbols-outlined">trending_up</span>
+          +18 since yesterday
+        </div>
+      </div>
+
+      <div class="kpi-card glass-frost accent-green">
+        <div class="kpi-top">
+          <div class="kpi-label">Resolved (30D)</div>
+          <span class="material-symbols-outlined kpi-icon">check_circle</span>
+        </div>
+        <div class="kpi-value" data-count="1956">0</div>
+        <div class="kpi-trend up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +12% resolution rate
+        </div>
+      </div>
+
+      <div class="kpi-card glass-frost accent-amber">
+        <div class="kpi-top">
+          <div class="kpi-label">SLA Compliance</div>
+          <span class="material-symbols-outlined kpi-icon">verified</span>
+        </div>
+        <div class="kpi-value" data-value="94.8%">94.8%</div>
+        <div class="kpi-trend up">
+          <span class="material-symbols-outlined">trending_up</span>
+          +2.1% this quarter
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Charts -->
+    <div class="charts-grid" id="chartsGrid">
+      <!-- Area Chart -->
+      <div class="chart-panel glass-frost">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Complaint Volume Trend</div>
+            <div class="chart-subtitle">24-hour rolling window</div>
+          </div>
+          <div class="chart-actions">
+            <button class="chart-action-btn active">24H</button>
+            <button class="chart-action-btn">7D</button>
+            <button class="chart-action-btn">30D</button>
+          </div>
+        </div>
+        <div class="chart-area" id="areaChart">
+          <div class="chart-tooltip" id="areaTooltip">
+            <div class="chart-tooltip-label">Ops Count</div>
+            <div id="areaTooltipValue">—</div>
+          </div>
+          <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(74,140,199,0.25)" />
+                <stop offset="100%" stop-color="rgba(74,140,199,0)" />
+              </linearGradient>
+              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#4a8cc7" />
+                <stop offset="100%" stop-color="#5ed9d7" />
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="50" x2="600" y2="50" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="0" y1="100" x2="600" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="0" y1="150" x2="600" y2="150" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <!-- Area fill -->
+            <path d="M0,140 C40,130 80,95 120,100 C160,105 200,60 240,55 C280,50 320,85 360,70 C400,55 440,35 480,45 C520,55 560,40 600,30 L600,200 L0,200 Z" fill="url(#areaFill)" />
+            <!-- Line -->
+            <path d="M0,140 C40,130 80,95 120,100 C160,105 200,60 240,55 C280,50 320,85 360,70 C400,55 440,35 480,45 C520,55 560,40 600,30" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Interactive dots -->
+            <circle class="chart-dot" cx="0" cy="140" r="4" fill="#4a8cc7" opacity="0" data-val="842"/>
+            <circle class="chart-dot" cx="100" cy="100" r="4" fill="#4a8cc7" opacity="0" data-val="1024"/>
+            <circle class="chart-dot" cx="200" cy="60" r="4" fill="#5aa8d8" opacity="0" data-val="1180"/>
+            <circle class="chart-dot" cx="300" cy="85" r="4" fill="#5aa8d8" opacity="0" data-val="1090"/>
+            <circle class="chart-dot" cx="400" cy="55" r="4" fill="#5cc8c8" opacity="0" data-val="1200"/>
+            <circle class="chart-dot" cx="500" cy="45" r="4" fill="#5ed9d7" opacity="0" data-val="1248"/>
+            <circle class="chart-dot" cx="600" cy="30" r="4" fill="#5ed9d7" opacity="0" data-val="1310"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Donut Chart -->
+      <div class="chart-panel glass-frost">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Category Distribution</div>
+            <div class="chart-subtitle">By infrastructure domain · today</div>
+          </div>
+        </div>
+        <div class="donut-container">
+          <svg class="donut-svg" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="var(--outline-variant)" stroke-width="12" opacity="0.15"/>
+            <!-- Segments (stroke-dasharray = circumference portion, stroke-dashoffset for rotation) -->
+            <circle cx="60" cy="60" r="48" fill="none" stroke="var(--steel-blue)" stroke-width="12" stroke-dasharray="105 196" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="var(--teal)" stroke-width="12" stroke-dasharray="72 229" stroke-dashoffset="-105" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="var(--amber)" stroke-width="12" stroke-dasharray="48 253" stroke-dashoffset="-177" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="var(--red)" stroke-width="12" stroke-dasharray="30 271" stroke-dashoffset="-225" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <!-- Center text -->
+            <text x="60" y="56" text-anchor="middle" fill="var(--on-surface)" font-size="18" font-weight="700" font-family="Inter">342</text>
+            <text x="60" y="72" text-anchor="middle" fill="var(--outline)" font-size="8" font-family="JetBrains Mono" letter-spacing="0.05em">TOTAL</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:var(--steel-blue)"></div>
+              Water Issues
+              <span class="donut-legend-value">35%</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:var(--teal)"></div>
+              Road Defects
+              <span class="donut-legend-value">24%</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:var(--amber)"></div>
+              Electrical Faults
+              <span class="donut-legend-value">16%</span>
+            </div>
+            <div class="donut-legend-item">
+              <div class="donut-legend-dot" style="background:var(--red)"></div>
+              Drainage Blockages
+              <span class="donut-legend-value">10%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Live Map -->
+    <div class="map-section">
+      <div class="map-header">
+        <div>
+          <div class="chart-title">Live Infrastructure Map</div>
+          <div class="chart-subtitle">Bengaluru Metropolitan Area · Real-time</div>
+        </div>
+        <div class="chart-actions">
+          <button class="chart-action-btn active">All</button>
+          <button class="chart-action-btn">Water</button>
+          <button class="chart-action-btn">Power</button>
+          <button class="chart-action-btn">Traffic</button>
+        </div>
+      </div>
+
+      <div class="map-container glass-frost">
+        <div class="map-canvas">
+          <div class="map-grid"></div>
+
+          <!-- Simulated roads -->
+          <div class="map-roads">
+            <div class="map-road" style="left:12%;top:30%;width:76%;height:2px;"></div>
+            <div class="map-road" style="left:12%;top:55%;width:76%;height:2px;"></div>
+            <div class="map-road" style="left:12%;top:75%;width:55%;height:2px;"></div>
+            <div class="map-road" style="left:25%;top:15%;width:2px;height:70%;"></div>
+            <div class="map-road" style="left:50%;top:10%;width:2px;height:80%;"></div>
+            <div class="map-road" style="left:72%;top:20%;width:2px;height:55%;"></div>
+            <div class="map-road" style="left:18%;top:42%;width:35%;height:2px;transform:rotate(-18deg);"></div>
+            <div class="map-road" style="left:45%;top:38%;width:30%;height:2px;transform:rotate(12deg);"></div>
+          </div>
+
+          <!-- Markers -->
+          <div class="map-marker active" style="left:30%;top:35%;">
+            <div class="map-marker-tooltip">Koramangala Water Station — Active</div>
+          </div>
+          <div class="map-marker active" style="left:55%;top:28%;">
+            <div class="map-marker-tooltip">Indiranagar Grid Node — Active</div>
+          </div>
+          <div class="map-marker breach" style="left:42%;top:52%;">
+            <div class="map-marker-tooltip">Jayanagar Sector 4 — Breach Detected</div>
+          </div>
+          <div class="map-marker active" style="left:68%;top:42%;">
+            <div class="map-marker-tooltip">Whitefield Smart Meter — Active</div>
+          </div>
+          <div class="map-marker resolved" style="left:22%;top:60%;">
+            <div class="map-marker-tooltip">Basavanagudi Drain Fix — Resolved</div>
+          </div>
+          <div class="map-marker active" style="left:75%;top:65%;">
+            <div class="map-marker-tooltip">Electronic City Power Hub — Active</div>
+          </div>
+          <div class="map-marker resolved" style="left:38%;top:72%;">
+            <div class="map-marker-tooltip">JP Nagar Road Patch — Resolved</div>
+          </div>
+          <div class="map-marker active" style="left:60%;top:58%;">
+            <div class="map-marker-tooltip">HSR Layout Sensor Array — Active</div>
+          </div>
+          <div class="map-marker breach" style="left:48%;top:22%;">
+            <div class="map-marker-tooltip">Hebbal Flyover Strain — Alert</div>
+          </div>
+          <div class="map-marker active" style="left:82%;top:32%;">
+            <div class="map-marker-tooltip">KR Puram Junction — Active</div>
+          </div>
+        </div>
+
+        <!-- Map legend -->
+        <div class="map-legend">
+          <div class="map-legend-item">
+            <div class="map-legend-dot" style="background:var(--teal)"></div>
+            Active
+          </div>
+          <div class="map-legend-item">
+            <div class="map-legend-dot" style="background:var(--red)"></div>
+            Breach
+          </div>
+          <div class="map-legend-item">
+            <div class="map-legend-dot" style="background:var(--green)"></div>
+            Resolved
+          </div>
+        </div>
+
+        <!-- Zoom controls -->
+        <div class="map-controls">
+          <button class="map-ctrl-btn" aria-label="Zoom in">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+          <button class="map-ctrl-btn" aria-label="Zoom out">
+            <span class="material-symbols-outlined">remove</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Incidents & Quick Stats -->
+    <div class="incident-grid">
+      <div class="incident-panel glass-frost">
+        <div class="chart-header" style="margin-bottom:16px;">
+          <div>
+            <div class="chart-title">Recent Incidents</div>
+            <div class="chart-subtitle">Last 12 hours</div>
+          </div>
+          <button class="chart-action-btn">View All</button>
+        </div>
+        <div class="incident-list">
+          <div class="incident-row critical">
+            <div class="incident-info">
+              <div class="incident-title">Jayanagar Sector 4 — Pipeline Breach</div>
+              <div class="incident-meta">14:22:15 · Water Issues · Ward 38</div>
+            </div>
+            <div class="incident-badge critical">Critical</div>
+          </div>
+          <div class="incident-row critical">
+            <div class="incident-info">
+              <div class="incident-title">Hebbal Flyover — Structural Strain Alert</div>
+              <div class="incident-meta">13:58:02 · Road Defects · Ward 12</div>
+            </div>
+            <div class="incident-badge critical">Critical</div>
+          </div>
+          <div class="incident-row warning">
+            <div class="incident-info">
+              <div class="incident-title">Marathahalli — Electrical Fault Fluctuation</div>
+              <div class="incident-meta">12:40:33 · Electrical Faults · Ward 24</div>
+            </div>
+            <div class="incident-badge warning">Warning</div>
+          </div>
+          <div class="incident-row resolved">
+            <div class="incident-info">
+              <div class="incident-title">JP Nagar — Road Patch Complete</div>
+              <div class="incident-meta">11:15:48 · Road Defects · Ward 29</div>
+            </div>
+            <div class="incident-badge ok">Resolved</div>
+          </div>
+          <div class="incident-row resolved">
+            <div class="incident-info">
+              <div class="incident-title">Basavanagudi — Drain Blockage Cleared</div>
+              <div class="incident-meta">10:02:11 · Drainage Blockages · Ward 31</div>
+            </div>
+            <div class="incident-badge ok">Resolved</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="incident-panel glass-frost">
+        <div class="chart-header" style="margin-bottom:16px;">
+          <div>
+            <div class="chart-title">Operational Status</div>
+            <div class="chart-subtitle">Real-time diagnostics</div>
+          </div>
+        </div>
+        <div class="quick-stats">
+          <div class="quick-stat-row">
+            <div class="quick-stat-label">Network Latency</div>
+            <div style="display:flex;align-items:center;">
+              <div class="quick-stat-value">12ms</div>
+              <div class="quick-stat-bar"><div class="quick-stat-bar-fill" style="width:15%"></div></div>
+            </div>
+          </div>
+          <div class="quick-stat-row">
+            <div class="quick-stat-label">CPU Utilization</div>
+            <div style="display:flex;align-items:center;">
+              <div class="quick-stat-value">34%</div>
+              <div class="quick-stat-bar"><div class="quick-stat-bar-fill" style="width:34%"></div></div>
+            </div>
+          </div>
+          <div class="quick-stat-row">
+            <div class="quick-stat-label">Memory Usage</div>
+            <div style="display:flex;align-items:center;">
+              <div class="quick-stat-value">61%</div>
+              <div class="quick-stat-bar"><div class="quick-stat-bar-fill" style="width:61%"></div></div>
+            </div>
+          </div>
+          <div class="quick-stat-row">
+            <div class="quick-stat-label">Storage Capacity</div>
+            <div style="display:flex;align-items:center;">
+              <div class="quick-stat-value">78%</div>
+              <div class="quick-stat-bar"><div class="quick-stat-bar-fill" style="width:78%"></div></div>
+            </div>
+          </div>
+          <div class="quick-stat-row">
+            <div class="quick-stat-label">Sensor Mesh Online</div>
+            <div style="display:flex;align-items:center;">
+              <div class="quick-stat-value">4,096</div>
+              <div class="quick-stat-bar"><div class="quick-stat-bar-fill" style="width:100%"></div></div>
+            </div>
+          </div>
+          <div class="quick-stat-row">
+            <div class="quick-stat-label">API Response (p95)</div>
+            <div style="display:flex;align-items:center;">
+              <div class="quick-stat-value">48ms</div>
+              <div class="quick-stat-bar"><div class="quick-stat-bar-fill" style="width:22%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================================================================
+       SCRIPTS
+       ================================================================ -->
+  <script>
+    // =================================================================
+    // SIDEBAR COLLAPSE TOGGLE
+    // =================================================================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      const icon = sidebarToggle.querySelector('.material-symbols-outlined');
+      icon.textContent = sidebar.classList.contains('collapsed') ? 'menu' : 'menu_open';
+    });
+
+    // Sidebar item active state
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    // =================================================================
+    // KPI COUNT-UP ANIMATION
+    // =================================================================
+    function animateCount(el, target, duration = 1600) {
+      const startTime = performance.now();
+      function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target).toLocaleString();
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // Trigger count-up after card animations finish
+    setTimeout(() => {
+      document.querySelectorAll('.kpi-value[data-count]').forEach(el => {
+        animateCount(el, parseInt(el.dataset.count));
+      });
+    }, 400);
+
+    // =================================================================
+    // CHART HOVER TOOLTIPS
+    // =================================================================
+    const areaChart = document.getElementById('areaChart');
+    const areaTooltip = document.getElementById('areaTooltip');
+    const areaTooltipValue = document.getElementById('areaTooltipValue');
+    const chartDots = areaChart.querySelectorAll('.chart-dot');
+
+    chartDots.forEach(dot => {
+      dot.addEventListener('mouseenter', (e) => {
+        dot.setAttribute('opacity', '1');
+        dot.setAttribute('r', '6');
+        areaTooltipValue.textContent = parseInt(dot.dataset.val).toLocaleString();
+
+        const rect = areaChart.getBoundingClientRect();
+        const svgRect = areaChart.querySelector('svg').getBoundingClientRect();
+        const cx = parseFloat(dot.getAttribute('cx'));
+        const cy = parseFloat(dot.getAttribute('cy'));
+
+        const xRatio = cx / 600;
+        const yRatio = cy / 200;
+        const tooltipX = xRatio * svgRect.width + (svgRect.left - rect.left);
+        const tooltipY = yRatio * svgRect.height + (svgRect.top - rect.top);
+
+        areaTooltip.style.left = tooltipX + 'px';
+        areaTooltip.style.top = (tooltipY - 50) + 'px';
+        areaTooltip.classList.add('visible');
+      });
+
+      dot.addEventListener('mouseleave', () => {
+        dot.setAttribute('opacity', '0');
+        dot.setAttribute('r', '4');
+        areaTooltip.classList.remove('visible');
+      });
+    });
+
+    // =================================================================
+    // CHART TAB TOGGLE (visual only)
+    // =================================================================
+    document.querySelectorAll('.chart-actions').forEach(group => {
+      group.querySelectorAll('.chart-action-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.chart-action-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
